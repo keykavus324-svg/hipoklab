@@ -1,5 +1,7 @@
 # HipokLab — Akademik Çalışma Kokpiti
 
+**Canlı site:** https://keykavus324-svg.github.io/hipoklab/
+
 Tıp ve sağlık bilimleri öğrencileri için komite odaklı, yüksek kontrastlı bir çalışma platformu.
 
 **Faz 1 kapsamı:** Çekirdek mimari, tasarım sistemi (koyu/açık mod), Akademik Kontrol Paneli,
