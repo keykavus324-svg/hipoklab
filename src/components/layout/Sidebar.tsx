@@ -10,7 +10,7 @@ import {
   Stethoscope,
 } from 'lucide-react';
 
-export type ViewKey = 'dashboard' | 'library';
+export type ViewKey = 'dashboard' | 'library' | 'atlas';
 
 interface SidebarProps {
   currentView: ViewKey;
@@ -20,7 +20,7 @@ interface SidebarProps {
 }
 
 interface NavItem {
-  key: ViewKey | 'atlas' | 'exam' | 'cases';
+  key: ViewKey | 'exam' | 'cases';
   label: string;
   icon: typeof Activity;
   enabled: boolean;
@@ -30,7 +30,7 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { key: 'dashboard', label: 'Kontrol Paneli', icon: LayoutDashboard, enabled: true },
   { key: 'library', label: 'Akademik Kütüphane', icon: BookOpen, enabled: true },
-  { key: 'atlas', label: 'Görsel Atlas', icon: Images, enabled: false, soon: true },
+  { key: 'atlas', label: 'Görsel Atlas', icon: Images, enabled: true },
   { key: 'exam', label: 'Sınav & Flashcard', icon: GraduationCap, enabled: false, soon: true },
   { key: 'cases', label: 'Klinik Vakalar', icon: Stethoscope, enabled: false, soon: true },
 ];

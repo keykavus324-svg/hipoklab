@@ -18,6 +18,8 @@ export interface CommandAction {
   hint?: string;
   icon: typeof Search;
   section: string;
+  /** Filtrelemeye dahil edilen ek anahtar kelimeler (eş anlamlılar). */
+  keywords?: string;
   run: () => void;
 }
 
@@ -44,7 +46,8 @@ export function CommandPalette({ open, onClose, actions }: CommandPaletteProps) 
       (a) =>
         a.label.toLocaleLowerCase('tr').includes(q) ||
         (a.hint ?? '').toLocaleLowerCase('tr').includes(q) ||
-        a.section.toLocaleLowerCase('tr').includes(q),
+        a.section.toLocaleLowerCase('tr').includes(q) ||
+        (a.keywords ?? '').toLocaleLowerCase('tr').includes(q),
     );
   }, [actions, query]);
 

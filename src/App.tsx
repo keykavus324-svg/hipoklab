@@ -4,11 +4,13 @@ import {
   FilePlus2,
   LayoutDashboard,
   Moon,
+  Shapes,
   Sun,
   Timer,
   Upload,
 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { AtlasView, AtlasTarget } from './components/atlas/AtlasView';
 import { CommandAction, CommandPalette } from './components/common/CommandPalette';
 import { ToastItem, ToastStack } from './components/common/Toast';
 import { Dashboard } from './components/dashboard/Dashboard';
@@ -23,6 +25,7 @@ import {
   ALL_COMMITTEES_LABEL,
   getAllResources,
 } from './data/libraryData';
+import { ATLAS_DIAGRAMS } from './data/atlasData';
 import { useLocalStorage, readPrefixedStorage, writePrefixedStorage } from './hooks/useLocalStorage';
 import { usePomodoro } from './hooks/usePomodoro';
 import type { LibraryResource, PersistedState } from './types/hipoklab';
@@ -53,6 +56,10 @@ const PAGE_META: Record<ViewKey, { title: string; subtitle: string }> = {
     title: 'Akademik Kütüphane',
     subtitle: 'Komite odaklı kaynaklar · Split-View çalışma masası',
   },
+  atlas: {
+    title: 'Görsel Atlas',
+    subtitle: 'İnteraktif anatomik ve histolojik diyagramlar',
+  },
 };
 
 export default function App() {
@@ -64,6 +71,8 @@ export default function App() {
   const [filters, setFilters] = useState<LibraryFilters>(EMPTY_FILTERS);
   const [toasts, setToasts] = useState<ToastItem[]>([]);
   const [notesVersion, setNotesVersion] = useState(0);
+  const [atlasTarget, setAtlasTarget] = useState<AtlasTarget | null>(null);
+  const [presentationMode, setPresentationMode] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const toastIdRef = useRef(1);
 
@@ -262,6 +271,22 @@ export default function App() {
       },
     }));
 
+    // Görsel Atlas: anatomik / histolojik yapıları global aramada bul
+    const atlasActions: CommandAction[] = ATLAS_DIAGRAMS.flatMap((d) =>
+      d.pins.map((pin) => ({
+        id: `atlas-${pin.id}`,
+        label: `${pin.nameTr} — ${pin.nameLa}`,
+        hint: d.title,
+        icon: Shapes,
+        section: 'Görsel Atlas',
+        keywords: pin.aliases.join(' '),
+        run: () => {
+          setView('atlas');
+          setAtlasTarget({ diagramId: d.id, pinId: pin.id, nonce: Date.now() });
+        },
+      })),
+    );
+
     return [
       {
         id: 'goto-dashboard',
@@ -326,6 +351,7 @@ export default function App() {
         run: () => fileInputRef.current?.click(),
       },
       ...resourceActions,
+      ...atlasActions,
     ];
   }, [
     allResources,
@@ -342,41 +368,45 @@ export default function App() {
   /* ---------------------------------------------------------------------- */
   return (
     <div className="flex h-screen overflow-hidden bg-base text-fg">
-      {/* Sol navigasyon */}
-      <Sidebar
-        currentView={view}
-        onViewChange={(v) => {
-          setView(v);
-          setActiveResourceId(null);
-        }}
-        collapsed={settings.sidebarCollapsed}
-        onToggleCollapsed={() =>
-          setPersisted((prev) => ({
-            ...prev,
-            settings: { ...prev.settings, sidebarCollapsed: !prev.settings.sidebarCollapsed },
-          }))
-        }
-      />
+      {/* Sol navigasyon — sunum modunda gizli */}
+      {!presentationMode ? (
+        <Sidebar
+          currentView={view}
+          onViewChange={(v) => {
+            setView(v);
+            setActiveResourceId(null);
+          }}
+          collapsed={settings.sidebarCollapsed}
+          onToggleCollapsed={() =>
+            setPersisted((prev) => ({
+              ...prev,
+              settings: { ...prev.settings, sidebarCollapsed: !prev.settings.sidebarCollapsed },
+            }))
+          }
+        />
+      ) : null}
 
       {/* Ana alan */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <TopBar
-          title={activeResource ? activeResource.title : PAGE_META[view].title}
-          subtitle={activeResource ? `${activeResource.course} · Split-View Okuyucu` : PAGE_META[view].subtitle}
-          theme={settings.theme}
-          onToggleTheme={toggleTheme}
-          activeCommittee={settings.activeCommittee}
-          onCommitteeChange={(committee) => {
-            setPersisted((prev) => ({ ...prev, settings: { ...prev.settings, activeCommittee: committee } }));
-            if (committee !== ALL_COMMITTEES_LABEL) {
-              setFilters((f) => ({ ...f, committee }));
-            }
-          }}
-          pomodoro={pomodoro}
-          onOpenPalette={() => setPaletteOpen(true)}
-          onExport={handleExport}
-          onImport={() => fileInputRef.current?.click()}
-        />
+        {!presentationMode ? (
+          <TopBar
+            title={activeResource ? activeResource.title : PAGE_META[view].title}
+            subtitle={activeResource ? `${activeResource.course} · Split-View Okuyucu` : PAGE_META[view].subtitle}
+            theme={settings.theme}
+            onToggleTheme={toggleTheme}
+            activeCommittee={settings.activeCommittee}
+            onCommitteeChange={(committee) => {
+              setPersisted((prev) => ({ ...prev, settings: { ...prev.settings, activeCommittee: committee } }));
+              if (committee !== ALL_COMMITTEES_LABEL) {
+                setFilters((f) => ({ ...f, committee }));
+              }
+            }}
+            pomodoro={pomodoro}
+            onOpenPalette={() => setPaletteOpen(true)}
+            onExport={handleExport}
+            onImport={() => fileInputRef.current?.click()}
+          />
+        ) : null}
 
         <main className="flex-1 overflow-y-auto">
           {view === 'dashboard' ? (
@@ -392,6 +422,8 @@ export default function App() {
               }}
               onNavigateLibrary={() => setView('library')}
             />
+          ) : view === 'atlas' ? (
+            <AtlasView target={atlasTarget} onPresentationChange={setPresentationMode} />
           ) : (
             <LibraryView
               resources={allResources}

@@ -27,8 +27,9 @@ npm run preview
 | Split-View Okuyucu (içindekiler, yazı boyutu, klinik kutular, tablolar) | ✅ Aktif |
 | Kişisel Not Defteri (localStorage otomatik kayıt, önizleme, .md indirme) | ✅ Aktif |
 | Yeni Kaynak Ekle / JSON Yedekle-İçe Aktar | ✅ Aktif |
-| Pomodoro (25/5) + Ctrl/Cmd+K Global Arama Paleti | ✅ Aktif |
-| Görsel Atlas · Sınav & Flashcard · Klinik Vakalar | 🕓 Yakında |
+| Görsel Atlas (4 SVG diyagram, inceleme / kendini test et / hoca sunum modları) | ✅ Aktif |
+| Pomodoro (25/5) + Ctrl/Cmd+K Global Arama Paleti (anatomik yapı arama dahil) | ✅ Aktif |
+| Sınav & Flashcard · Klinik Vakalar | 🕓 Yakında |
 
 ## Kısayollar
 
