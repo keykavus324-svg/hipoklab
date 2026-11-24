@@ -24,7 +24,8 @@ npm run preview
 
 | Modül | Durum |
 | --- | --- |
-| Kontrol Paneli (günlük ilerleme, komite çubukları, high-yield spot, kaldığın yerden devam, çalışma ısı haritası + seri) | ✅ Aktif |
+| Kişisel Çalışma Planı (kurulum sihirbazı, sınav geri sayımı, günlük görevler, haftalık otomatik plan) | ✅ Aktif |
+| Kontrol Paneli (geri sayım, hazırlık yüzdesi, çalışma ısı haritası + seri, komite çubukları, high-yield spot) | ✅ Aktif |
 | Akademik Kütüphane (dönem → kurul → ders → tür filtreleri + anlık arama, favoriler, sıralama) | ✅ Aktif |
 | Split-View Okuyucu (içindekiler, yazı boyutu, klinik kutular, tablolar) | ✅ Aktif |
 | Kişisel Not Defteri (localStorage otomatik kayıt, önizleme, .md indirme) | ✅ Aktif |

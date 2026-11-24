@@ -1,14 +1,21 @@
 import {
   ArrowRight,
   BookOpen,
+  Brain,
+  CalendarClock,
   CalendarDays,
+  Check,
   CheckCircle2,
   Clock,
   Flame,
+  ListChecks,
+  Pencil,
   RefreshCw,
+  Rocket,
   Sparkles,
   Stethoscope as StethoscopeIcon,
   Target,
+  Timer,
   TrendingUp,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
@@ -18,7 +25,14 @@ import {
   HIGH_YIELD_SPOTS,
   excerpt,
 } from '../../data/libraryData';
-import type { CardProgress, LibraryResource } from '../../types/hipoklab';
+import { buildDailyMissions, buildWeeklyPlan, daysUntil, todayISO } from '../../data/studyPlan';
+import type {
+  CardProgress,
+  CaseProgress,
+  LibraryResource,
+  MissionLog,
+  UserProfile,
+} from '../../types/hipoklab';
 import { RichText } from '../common/Markdown';
 import { StudyHeatmap } from './StudyHeatmap';
 
@@ -30,12 +44,24 @@ interface DashboardProps {
   dailyGoal: number;
   studyLog: Record<string, number>;
   cardProgress: Record<string, CardProgress>;
+  caseProgress: Record<string, CaseProgress>;
+  missionLog: MissionLog;
+  profile: UserProfile | null;
   dueCardCount: number;
+  onToggleMission: (dateISO: string, missionId: string) => void;
+  onOpenProfile: () => void;
   onOpenResource: (id: string) => void;
   onNavigateLibrary: () => void;
   onOpenExam: () => void;
-  onOpenCases: () => void;
+  onOpenCases: (caseId?: string) => void;
 }
+
+const MISSION_ICONS: Record<string, typeof Brain> = {
+  review: RefreshCw,
+  case: StethoscopeIcon,
+  read: BookOpen,
+  focus: Timer,
+};
 
 const DAY_LABELS = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
 const MONTH_LABELS = [
@@ -57,7 +83,12 @@ export function Dashboard({
   dailyGoal,
   studyLog,
   cardProgress,
+  caseProgress,
+  missionLog,
+  profile,
   dueCardCount,
+  onToggleMission,
+  onOpenProfile,
   onOpenResource,
   onNavigateLibrary,
   onOpenExam,
@@ -69,6 +100,38 @@ export function Dashboard({
 
   const now = new Date();
   const dateLabel = `${now.getDate()} ${MONTH_LABELS[now.getMonth()]} ${now.getFullYear()}, ${DAY_LABELS[now.getDay()]}`;
+
+  /* Kişisel plan: günlük görevler + haftalık program + geri sayım */
+  const isoToday = todayISO();
+  const missions = useMemo(
+    () =>
+      buildDailyMissions(
+        {
+          now: Date.now(),
+          profile,
+          resources,
+          completed,
+          cardProgress,
+          caseProgress,
+          studyLog,
+          missionLog,
+          dueCardCount,
+        },
+        isoToday,
+      ),
+    [profile, resources, completed, cardProgress, caseProgress, studyLog, missionLog, dueCardCount, isoToday],
+  );
+  const weeklyPlan = useMemo(
+    () => buildWeeklyPlan({ profile, resources, completed }, isoToday),
+    [profile, resources, completed, isoToday],
+  );
+  const missionsDone = missions.filter((m) => m.done).length;
+  const examLeft = profile ? daysUntil(profile.examDate) : 0;
+  const preparedness = useMemo(() => {
+    const total = resources.length;
+    const done = resources.filter((r) => completed[r.id] !== undefined).length;
+    return total > 0 ? Math.round((done / total) * 100) : 0;
+  }, [resources, completed]);
 
   const stats = useMemo(() => {
     const total = resources.length;
@@ -114,18 +177,228 @@ export function Dashboard({
 
   return (
     <div className="mx-auto max-w-6xl animate-fade-in px-5 pb-12 pt-6">
-      {/* Karşılama */}
-      <div className="mb-6">
-        <p className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-widest text-accent">
-          <CalendarDays size={12} /> {dateLabel}
-        </p>
-        <h2 className="mt-1.5 text-2xl font-semibold tracking-tight text-fg">
-          Merhaba, çalışmaya kaldığın yerden devam edelim.
-        </h2>
-        <p className="mt-1 text-sm text-sub">
-          Bugün {stats.doneToday} konu tamamladın — hedefin {dailyGoal} konu. İstikrar, sınav haftasının
-          en güçlü stratejisidir.
-        </p>
+      {/* Sınav geri sayımı / kişisel plan */}
+      {profile ? (
+        <div className="relative mb-4 overflow-hidden rounded-2xl border border-accent/30 bg-gradient-to-br from-accent/[0.10] via-surface to-azure/[0.07] p-6 shadow-panel">
+          <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-accent/10 blur-3xl" />
+          <div className="flex flex-wrap items-start justify-between gap-6">
+            <div>
+              <p className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-widest text-accent">
+                <CalendarDays size={12} /> {dateLabel}
+              </p>
+              <h2 className="mt-1.5 text-2xl font-semibold tracking-tight text-fg">
+                {profile.name ? `Merhaba ${profile.name}, ` : 'Merhaba, '}
+                <span className="text-accent">{profile.examLabel}</span> yaklaşıyor.
+              </h2>
+              <div className="mt-3 flex items-end gap-3">
+                <span className="text-[52px] font-semibold leading-none tracking-tight text-fg tabular-nums">
+                  {examLeft}
+                </span>
+                <span className="pb-1.5 text-sm text-sub">
+                  gün kaldı
+                  <span className="ml-2 text-faint">
+                    · {new Date(`${profile.examDate}T12:00:00`).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long' })}
+                  </span>
+                </span>
+              </div>
+              <p className="mt-2 max-w-lg text-[12.5px] leading-relaxed text-sub">
+                Bugünün görevlerini tamamla, haftalık plana sadık kal —{' '}
+                <span className="font-medium text-fg">istikrar, sınav haftasının en güçlü stratejisidir.</span>
+              </p>
+            </div>
+
+            <div className="flex flex-col items-center gap-3">
+              {/* Hazırlık göstergesi */}
+              <div className="relative h-[104px] w-[104px]">
+                <svg className="h-full w-full -rotate-90" viewBox="0 0 100 100" aria-hidden>
+                  <circle cx="50" cy="50" r="42" fill="none" stroke="rgb(var(--c-line))" strokeWidth="9" />
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="42"
+                    fill="none"
+                    stroke="rgb(var(--c-accent))"
+                    strokeWidth="9"
+                    strokeLinecap="round"
+                    strokeDasharray={2 * Math.PI * 42}
+                    strokeDashoffset={2 * Math.PI * 42 * (1 - preparedness / 100)}
+                    style={{ transition: 'stroke-dashoffset 0.6s ease' }}
+                  />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-xl font-semibold tabular-nums text-fg">%{preparedness}</span>
+                  <span className="text-[8.5px] uppercase tracking-wider text-faint">hazırlık</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={onOpenProfile}
+                className="flex items-center gap-1.5 rounded-xl border border-line bg-surface2 px-3.5 py-2 text-[11px] font-medium text-sub transition hover:border-accent/40 hover:text-accent"
+              >
+                <Pencil size={12} /> Planı Düzenle
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-dashed border-accent/45 bg-accent/[0.06] p-6">
+          <div className="flex items-center gap-3.5">
+            <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-accent/35 bg-accent/15 text-accent">
+              <Rocket size={20} />
+            </span>
+            <div>
+              <p className="text-[14px] font-semibold text-fg">Kişisel çalışma planını oluştur</p>
+              <p className="mt-0.5 text-[12px] text-sub">
+                Sınav tarihinizi girin — HipokLab kalan konuları günlere yaysın, her gün ne çalışacağınızı söylesin.
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={onOpenProfile}
+            className="flex items-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-[13px] font-semibold text-[#04211d] shadow-glow-accent transition hover:brightness-110"
+          >
+            <Rocket size={15} /> Planımı Oluştur
+          </button>
+        </div>
+      )}
+
+      {/* Bugünün görevleri + haftalık plan */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
+        {/* Günlük görevler */}
+        <div className="rounded-2xl border border-line bg-surface p-6 shadow-panel lg:col-span-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="flex items-center gap-2 text-[12px] font-semibold uppercase tracking-wider text-fg">
+                <ListChecks size={13} className="text-accent" /> Bugünün Görevleri
+              </h3>
+              <p className="mt-1 text-[11px] text-faint">
+                {missionsDone}/{missions.length} tamamlandı · her görev ilerlemeni otomatik izler
+              </p>
+            </div>
+            <div className="flex items-center gap-1">
+              {missions.map((m) => (
+                <span
+                  key={m.id}
+                  className={`h-2 w-2 rounded-full transition ${m.done ? 'bg-accent' : 'bg-surface2'}`}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-4 space-y-2.5">
+            {missions.map((m) => {
+              const Icon = MISSION_ICONS[m.kind] ?? Target;
+              return (
+                <div
+                  key={m.id}
+                  className={`flex items-center gap-3 rounded-xl border p-3.5 transition ${
+                    m.done
+                      ? 'border-accent/35 bg-accent/[0.07]'
+                      : 'border-line bg-surface2/50 hover:border-accent/30'
+                  }`}
+                >
+                  {/* İşaretleme */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!m.autoDone) onToggleMission(isoToday, m.id);
+                    }}
+                    disabled={m.autoDone}
+                    title={m.autoDone ? 'Bu görev ilerlemenizle otomatik tamamlandı' : 'Görevi işaretle'}
+                    className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border transition ${
+                      m.done
+                        ? 'border-accent bg-accent text-[#04211d]'
+                        : m.autoDone
+                          ? 'border-line text-faint opacity-50'
+                          : 'border-line text-transparent hover:border-accent/50'
+                    }`}
+                  >
+                    <Check size={13} strokeWidth={3} />
+                  </button>
+
+                  <span
+                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border ${
+                      m.done ? 'border-accent/30 bg-accent/12 text-accent' : 'border-line bg-surface text-faint'
+                    }`}
+                  >
+                    <Icon size={15} />
+                  </span>
+
+                  <div className="min-w-0 flex-1">
+                    <p className={`text-[12px] font-semibold ${m.done ? 'text-accent' : 'text-fg'}`}>
+                      {m.title}
+                    </p>
+                    <p className="truncate text-[10.5px] text-faint">{m.detail}</p>
+                  </div>
+
+                  <span className="shrink-0 rounded-md border border-line bg-surface px-1.5 py-0.5 text-[9px] font-medium text-faint tabular-nums">
+                    ~{m.minutes} dk
+                  </span>
+
+                  {m.action !== 'none' ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (m.action === 'exam') onOpenExam();
+                        else if (m.action === 'case') onOpenCases(m.actionTargetId);
+                        else if (m.action === 'resource' && m.actionTargetId) onOpenResource(m.actionTargetId);
+                      }}
+                      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-line text-faint transition hover:border-accent/45 hover:text-accent"
+                      title="Göreve başla"
+                    >
+                      <ArrowRight size={13} />
+                    </button>
+                  ) : null}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Haftalık plan */}
+        <div className="rounded-2xl border border-line bg-surface p-6 shadow-panel lg:col-span-2">
+          <h3 className="flex items-center gap-2 text-[12px] font-semibold uppercase tracking-wider text-fg">
+            <CalendarClock size={13} className="text-azure" /> Bu Haftanın Planı
+          </h3>
+          <p className="mt-1 text-[11px] text-faint">
+            {profile ? `${profile.examLabel} tarihine göre otomatik dağıtıldı` : 'Profil oluşturunca sınav tarihine göre planlanır'}
+          </p>
+
+          <div className="mt-3.5 space-y-1.5">
+            {weeklyPlan.map((d) => (
+              <div
+                key={d.dateISO}
+                className={`rounded-xl border px-3.5 py-2.5 transition ${
+                  d.isToday
+                    ? 'border-accent/40 bg-accent/[0.08]'
+                    : 'border-line/70 bg-surface2/40 hover:border-line'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <p className={`text-[10.5px] font-semibold uppercase tracking-wider ${d.isToday ? 'text-accent' : 'text-faint'}`}>
+                    {d.label}
+                  </p>
+                  {d.isToday ? (
+                    <span className="rounded bg-accent/15 px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider text-accent">
+                      bugün
+                    </span>
+                  ) : null}
+                </div>
+                <ul className="mt-1 space-y-0.5">
+                  {d.items.map((item, i) => (
+                    <li key={i} className="truncate text-[11px] leading-relaxed text-sub">
+                      · {item}
+                    </li>
+                  ))}
+                </ul>
+                {d.reviewNote ? (
+                  <p className="mt-1 text-[9.5px] font-medium text-gold">↻ {d.reviewNote}</p>
+                ) : null}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Üst istatistik satırı */}
@@ -309,23 +582,35 @@ export function Dashboard({
         </div>
       </div>
 
-      {/* Çalışma ritmi + bugünün planı */}
+      {/* Çalışma ritmi + kart istatistikleri */}
       <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-5">
         <div className="lg:col-span-3">
           <StudyHeatmap studyLog={studyLog} weeks={14} />
         </div>
 
-        {/* Bugünün çalışma planı */}
+        {/* Kart / tekrar istatistikleri */}
         <div className="rounded-2xl border border-line bg-surface p-6 shadow-panel lg:col-span-2">
           <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-accent">
-            <Target size={12} /> Bugünün Çalışma Planı
+            <Target size={12} /> Flashcard Durumu
           </p>
+          <div className="mt-4 grid grid-cols-2 gap-2.5">
+            <div className="rounded-xl border border-line bg-surface2/50 p-3">
+              <p className="text-[9.5px] font-semibold uppercase tracking-wider text-faint">Toplam Kart</p>
+              <p className="mt-1 text-[16px] font-semibold text-fg">{Object.keys(cardProgress).length}</p>
+            </div>
+            <div className="rounded-xl border border-line bg-surface2/50 p-3">
+              <p className="text-[9.5px] font-semibold uppercase tracking-wider text-faint">Ustalaşılan</p>
+              <p className="mt-1 text-[16px] font-semibold text-accent">
+                {Object.values(cardProgress).filter((p) => p.interval >= 21).length}
+              </p>
+            </div>
+          </div>
 
           {/* Tekrar bekleyen kartlar */}
           <button
             type="button"
             onClick={onOpenExam}
-            className="mt-4 flex w-full items-center gap-3 rounded-xl border border-line bg-surface2/60 p-3.5 text-left transition hover:border-accent/40"
+            className="mt-3 flex w-full items-center gap-3 rounded-xl border border-line bg-surface2/60 p-3.5 text-left transition hover:border-accent/40"
           >
             <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-azure/30 bg-azure/12 text-azure">
               <RefreshCw size={17} />
@@ -346,7 +631,7 @@ export function Dashboard({
           {/* Klinik vaka CTA */}
           <button
             type="button"
-            onClick={onOpenCases}
+            onClick={() => onOpenCases()}
             className="mt-2.5 flex w-full items-center gap-3 rounded-xl border border-line bg-surface2/60 p-3.5 text-left transition hover:border-accent/40"
           >
             <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-danger/30 bg-danger/12 text-danger">
@@ -358,20 +643,6 @@ export function Dashboard({
             </div>
             <ArrowRight size={15} className="shrink-0 text-faint" />
           </button>
-
-          {/* Kart istatistikleri */}
-          <div className="mt-3 grid grid-cols-2 gap-2.5">
-            <div className="rounded-xl border border-line bg-surface2/50 p-3">
-              <p className="text-[9.5px] font-semibold uppercase tracking-wider text-faint">Toplam Kart</p>
-              <p className="mt-1 text-[16px] font-semibold text-fg">{Object.keys(cardProgress).length}</p>
-            </div>
-            <div className="rounded-xl border border-line bg-surface2/50 p-3">
-              <p className="text-[9.5px] font-semibold uppercase tracking-wider text-faint">Ustalaşılan</p>
-              <p className="mt-1 text-[16px] font-semibold text-accent">
-                {Object.values(cardProgress).filter((p) => p.interval >= 21).length}
-              </p>
-            </div>
-          </div>
         </div>
       </div>
 

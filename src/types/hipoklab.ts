@@ -175,6 +175,27 @@ export interface CaseProgress {
 }
 
 /* ---------------------------------------------------------------------------
+   Kişisel çalışma planı
+--------------------------------------------------------------------------- */
+
+/** Kullanıcının sınav hedefi ve çalışma tercihleri. */
+export interface UserProfile {
+  name: string;
+  /** Sınavın adı — ör. "Komite 3", "Kurul Sınavı", "TUS Denemesi". */
+  examLabel: string;
+  /** Sınav tarihi (YYYY-MM-DD). */
+  examDate: string;
+  /** Günlük çalışma hedefi (dakika). */
+  dailyMinutes: number;
+  /** Öncelik verilecek dersler (boşsa tüm dersler). */
+  courses: Course[];
+  onboarded: boolean;
+}
+
+/** Günlük görevlerden tamamlananların kaydı (YYYY-MM-DD -> görev id'leri). */
+export type MissionLog = Record<string, string[]>;
+
+/* ---------------------------------------------------------------------------
    Kalıcı kullanıcı verisi
 --------------------------------------------------------------------------- */
 
@@ -191,6 +212,12 @@ export interface PersistedState {
   caseProgress: Record<string, CaseProgress>;
   /** YYYY-MM-DD -> dakika (pomodoro + okuma + flashcard çalışma süresi). */
   studyLog: Record<string, number>;
+  /** Kişisel çalışma planı profili (kurulum sihirbazında oluşturulur). */
+  profile: UserProfile | null;
+  /** Kurulum sihirbazı en az bir kez gösterildi mi? */
+  onboardingSeen: boolean;
+  /** Günlük görevlerin elle işaretlenen tamamlanma kaydı. */
+  missionLog: MissionLog;
 }
 
 export interface TocEntry extends TocItem {

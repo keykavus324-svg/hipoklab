@@ -33,9 +33,11 @@ import {
 import { ATLAS_DIAGRAMS } from './data/atlasData';
 import { CLINICAL_CASES, getCaseById } from './data/clinicalCases';
 import { FLASHCARD_DECKS, defaultCardProgress, getDueCardIds, rateCard } from './data/flashcardData';
+import { toISODate } from './data/studyPlan';
+import { OnboardingModal } from './components/onboarding/OnboardingModal';
 import { useLocalStorage, readPrefixedStorage, writePrefixedStorage } from './hooks/useLocalStorage';
 import { usePomodoro } from './hooks/usePomodoro';
-import type { CardRating, CaseProgress, LibraryResource, PersistedState } from './types/hipoklab';
+import type { CardRating, CaseProgress, Course, LibraryResource, PersistedState, UserProfile } from './types/hipoklab';
 
 const STATE_KEY = 'hipoklab:state';
 
@@ -56,11 +58,20 @@ const DEFAULT_STATE: PersistedState = {
   cardProgress: {},
   caseProgress: {},
   studyLog: {},
+  profile: null,
+  onboardingSeen: false,
+  missionLog: {},
 };
 
 /* Kalıcı durum nesnesi mi? */
 function isRecord(v: unknown): v is Record<string, unknown> {
   return typeof v === 'object' && v !== null && !Array.isArray(v);
+}
+
+const COURSE_LIST: Course[] = ['Anatomi', 'Fizyoloji', 'Histoloji', 'Biyokimya', 'Patoloji'];
+
+function defaultExamDate(): string {
+  return toISODate(new Date(Date.now() + 21 * 24 * 60 * 60 * 1000));
 }
 
 /**
@@ -118,6 +129,32 @@ function normalizeState(raw: unknown): PersistedState {
     }
   }
 
+  // Kişisel profil
+  let profile: PersistedState['profile'] = null;
+  if (isRecord(r.profile)) {
+    const p = r.profile;
+    profile = {
+      name: typeof p.name === 'string' ? p.name : '',
+      examLabel: typeof p.examLabel === 'string' && p.examLabel ? p.examLabel : 'Sınav',
+      examDate: typeof p.examDate === 'string' && p.examDate ? p.examDate : defaultExamDate(),
+      dailyMinutes: Number.isFinite(p.dailyMinutes) && Number(p.dailyMinutes) > 0 ? Number(p.dailyMinutes) : 60,
+      courses: Array.isArray(p.courses)
+        ? (p.courses as unknown[]).filter((c): c is Course => COURSE_LIST.includes(c as Course))
+        : [],
+      onboarded: p.onboarded === true,
+    };
+  }
+
+  // Görev günlüğü: YYYY-MM-DD -> string[]
+  const missionLog: Record<string, string[]> = {};
+  if (isRecord(r.missionLog)) {
+    for (const [day, ids] of Object.entries(r.missionLog)) {
+      if (Array.isArray(ids)) {
+        missionLog[day] = ids.filter((id): id is string => typeof id === 'string');
+      }
+    }
+  }
+
   return {
     settings: {
       theme: s.theme === 'light' ? 'light' : 'dark',
@@ -142,6 +179,9 @@ function normalizeState(raw: unknown): PersistedState {
     cardProgress,
     caseProgress,
     studyLog,
+    profile,
+    onboardingSeen: r.onboardingSeen === true,
+    missionLog,
   };
 }
 
@@ -183,7 +223,7 @@ export default function App() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const toastIdRef = useRef(1);
 
-  const { settings, completed, lastRead, customResources, favorites, cardProgress, caseProgress, studyLog } =
+  const { settings, completed, lastRead, customResources, favorites, cardProgress, caseProgress, studyLog, profile, onboardingSeen, missionLog } =
     persisted;
 
   /* ---------------------------------------------------------------------- */
@@ -349,6 +389,46 @@ export default function App() {
   );
 
   const activeCase = useMemo(() => (activeCaseId ? getCaseById(activeCaseId) : null), [activeCaseId]);
+
+  /* ---------------------------------------------------------------------- */
+  /* Kişisel çalışma planı (kurulum sihirbazı)                              */
+  /* ---------------------------------------------------------------------- */
+  const [onboardingOpen, setOnboardingOpen] = useState(false);
+
+  // İlk ziyarette sihirbazı göster (bir kez)
+  useEffect(() => {
+    if (!onboardingSeen) setOnboardingOpen(true);
+  }, [onboardingSeen]);
+
+  const handleProfileComplete = useCallback(
+    (p: UserProfile) => {
+      setPersisted((prev) => ({ ...prev, profile: p, onboardingSeen: true }));
+      setOnboardingOpen(false);
+      notify(
+        p.examDate
+          ? `Planın hazır! ${p.examLabel} için günlük görevlerin Kontrol Paneli'nde seni bekliyor.`
+          : 'Planın hazır! Kontrol Paneli\'nden takip edebilirsin.',
+      );
+    },
+    [setPersisted, notify],
+  );
+
+  const closeOnboarding = useCallback(() => {
+    setPersisted((prev) => ({ ...prev, onboardingSeen: true }));
+    setOnboardingOpen(false);
+  }, [setPersisted]);
+
+  // Günlük görevi elle işaretle / kaldır
+  const toggleMission = useCallback(
+    (dateISO: string, missionId: string) => {
+      setPersisted((prev) => {
+        const day = prev.missionLog[dateISO] ?? [];
+        const next = day.includes(missionId) ? day.filter((m) => m !== missionId) : [...day, missionId];
+        return { ...prev, missionLog: { ...prev.missionLog, [dateISO]: next } };
+      });
+    },
+    [setPersisted],
+  );
 
   /* ---------------------------------------------------------------------- */
   /* JSON Yedekleme / İçe Aktarma                                           */
@@ -530,6 +610,15 @@ export default function App() {
         run: () => setAddModalOpen(true),
       },
       {
+        id: 'edit-plan',
+        label: profile ? 'Çalışma Planımı Düzenle' : 'Kişisel Planımı Oluştur',
+        hint: 'Plan',
+        icon: Timer,
+        section: 'Eylemler',
+        keywords: 'plan sınav hedef profil onboarding kurulum',
+        run: () => setOnboardingOpen(true),
+      },
+      {
         id: 'toggle-theme',
         label: settings.theme === 'dark' ? 'Açık Moda Geç' : 'Koyu Moda Geç',
         hint: 'Görünüm',
@@ -648,14 +737,22 @@ export default function App() {
               dailyGoal={settings.dailyGoal}
               studyLog={studyLog}
               cardProgress={cardProgress}
+              caseProgress={caseProgress}
+              missionLog={missionLog}
+              profile={profile}
               dueCardCount={dueCardCount}
+              onToggleMission={toggleMission}
+              onOpenProfile={() => setOnboardingOpen(true)}
               onOpenResource={(id) => {
                 setView('library');
                 openResource(id);
               }}
               onNavigateLibrary={() => setView('library')}
               onOpenExam={() => setView('exam')}
-              onOpenCases={() => setView('cases')}
+              onOpenCases={(caseId?: string) => {
+                setView('cases');
+                if (caseId) setActiveCaseId(caseId);
+              }}
             />
           ) : view === 'atlas' ? (
             <AtlasView target={atlasTarget} onPresentationChange={setPresentationMode} />
@@ -726,6 +823,12 @@ export default function App() {
         open={addModalOpen}
         onClose={() => setAddModalOpen(false)}
         onSave={handleSaveResource}
+      />
+      <OnboardingModal
+        open={onboardingOpen}
+        initial={profile}
+        onClose={closeOnboarding}
+        onComplete={handleProfileComplete}
       />
       <CommandPalette
         open={paletteOpen}
