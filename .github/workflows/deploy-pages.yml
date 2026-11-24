@@ -50,9 +50,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: "Pages kaynağını etkinleştir (branch: gh-pages)"
-        # İlk dağıtımda Pages kapalıysa API ile etkinleştirmeyi dener.
-        # Adım sonucu (başarı/başarısız) iş adımlarından okunabilir.
+        # Pages kapalıysa API ile etkinleştirmeyi dener. Yönetim (admin) izni
+        # gerektirdiği için başarısız olursa işi durdurmaz (warning ile geçer).
+        continue-on-error: true
         run: |
+          if gh api "repos/${GITHUB_REPOSITORY}/pages" > /dev/null 2>&1; then
+            echo "GitHub Pages zaten etkin."
+            exit 0
+          fi
           gh api -X POST "repos/${GITHUB_REPOSITORY}/pages" \
             -f "source[branch]=gh-pages" -f "source[path]=/" || \
           gh api -X PUT "repos/${GITHUB_REPOSITORY}/pages" \
