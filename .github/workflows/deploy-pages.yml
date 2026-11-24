@@ -1,0 +1,66 @@
+# HipokLab — GitHub Pages dağıtım workflow'u
+# Siteyi `gh-pages` dalına yayınlar (public depolarda Pages otomatik etkinleşir).
+name: Deploy HipokLab to GitHub Pages
+
+on:
+  push:
+    branches: ["main", "arena/6b0e4cfc-hipoklab"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Depoyu kontrol et
+        uses: actions/checkout@v4
+
+      - name: Node.js kur
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Bağımlılıkları yükle
+        run: npm ci
+
+      - name: TypeScript kontrolü ve üretim derlemesi
+        # BASE, alt dizinde yayınlanan Pages için varlık yollarını ayarlar
+        run: BASE=/hipoklab/ npm run build
+
+      - name: GitHub Pages'e dağıt (gh-pages dalı)
+        run: |
+          cd dist
+          touch .nojekyll
+          git init -b gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Deploy HipokLab site: ${GITHUB_SHA}"
+          git push --force "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "Pages kaynağını etkinleştir (branch: gh-pages)"
+        # Pages kapalıysa API ile etkinleştirmeyi dener. Yönetim (admin) izni
+        # gerektirdiği için başarısız olursa işi durdurmaz (warning ile geçer).
+        continue-on-error: true
+        run: |
+          if gh api "repos/${GITHUB_REPOSITORY}/pages" > /dev/null 2>&1; then
+            echo "GitHub Pages zaten etkin."
+            exit 0
+          fi
+          gh api -X POST "repos/${GITHUB_REPOSITORY}/pages" \
+            -f "source[branch]=gh-pages" -f "source[path]=/" || \
+          gh api -X PUT "repos/${GITHUB_REPOSITORY}/pages" \
+            -f "build_type=legacy" -f "source[branch]=gh-pages" -f "source[path]=/"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

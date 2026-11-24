@@ -1,0 +1,183 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------------------------------------------------------------------------
+   HipokLab Temel Tema Değişkenleri
+   Koyu mod varsayılan; `html.light` sınıfı açık modu etkinleştirir.
+--------------------------------------------------------------------------- */
+:root,
+html.dark {
+  color-scheme: dark;
+  --c-base: 9 13 22; /* #090D16 — derin obsidyen */
+  --c-surface: 15 22 35; /* #0F1623 — kart yüzeyi */
+  --c-surface2: 21 30 46; /* #151E2E — yükseltilmiş yüzey */
+  --c-surface3: 27 38 57;
+  --c-line: 30 41 59;
+  --c-line2: 51 65 85;
+  --c-fg: 226 232 240;
+  --c-sub: 148 163 184;
+  --c-faint: 100 116 139;
+  --c-accent: 20 184 166; /* Klinik Teal */
+  --c-accent2: 56 189 248; /* Medikal Mavi */
+  --c-gold: 245 158 11;
+  --c-danger: 248 113 113;
+  --spot-bg: 20 184 166;
+  --shadow-float: 0 24px 64px -24px rgb(2 6 23 / 0.7);
+}
+
+html.light {
+  color-scheme: light;
+  --c-base: 247 249 252;
+  --c-surface: 255 255 255;
+  --c-surface2: 241 245 249;
+  --c-surface3: 226 232 240;
+  --c-line: 226 232 240;
+  --c-line2: 203 213 225;
+  --c-fg: 15 23 42;
+  --c-sub: 71 85 105;
+  --c-faint: 100 116 139;
+  --c-accent: 13 148 136;
+  --c-accent2: 2 132 199;
+  --c-gold: 217 119 6;
+  --c-danger: 220 38 38;
+}
+
+html {
+  font-family: theme('fontFamily.sans');
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  @apply bg-base text-fg;
+  margin: 0;
+  min-height: 100vh;
+}
+
+::selection {
+  background: rgb(var(--c-accent) / 0.28);
+}
+
+/* İnce, zarif kaydırma çubukları */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(var(--c-line2)) transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: rgb(var(--c-line2));
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(var(--c-faint));
+}
+
+/* Odak halkası */
+:focus-visible {
+  outline: 2px solid rgb(var(--c-accent) / 0.7);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* ---------------------------------------------------------------------------
+   Akademik Doküman Tipografisi
+--------------------------------------------------------------------------- */
+.doc-body {
+  font-family: theme('fontFamily.serif');
+  line-height: 1.75;
+  color: rgb(var(--c-fg) / 0.92);
+}
+.doc-body p {
+  margin: 0 0 1rem;
+}
+.doc-body strong {
+  color: rgb(var(--c-fg));
+  font-weight: 700;
+}
+.doc-body em {
+  font-style: italic;
+}
+.doc-body code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.86em;
+  background: rgb(var(--c-surface2));
+  border: 1px solid rgb(var(--c-line));
+  border-radius: 5px;
+  padding: 0.08em 0.38em;
+}
+
+/* Markdown önizleme */
+.md-preview {
+  line-height: 1.7;
+  color: rgb(var(--c-fg) / 0.9);
+}
+.md-preview h1 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 1.1rem 0 0.55rem;
+  color: rgb(var(--c-fg));
+}
+.md-preview h2 {
+  font-size: 1.08rem;
+  font-weight: 650;
+  margin: 1rem 0 0.5rem;
+  color: rgb(var(--c-fg));
+}
+.md-preview h3 {
+  font-size: 0.98rem;
+  font-weight: 620;
+  margin: 0.85rem 0 0.45rem;
+  color: rgb(var(--c-fg));
+}
+.md-preview p {
+  margin: 0 0 0.7rem;
+}
+.md-preview ul {
+  margin: 0 0 0.75rem;
+  padding-left: 1.15rem;
+  list-style: disc;
+}
+.md-preview ol {
+  margin: 0 0 0.75rem;
+  padding-left: 1.25rem;
+  list-style: decimal;
+}
+.md-preview li {
+  margin-bottom: 0.28rem;
+}
+.md-preview blockquote {
+  margin: 0 0 0.75rem;
+  padding: 0.35rem 0.85rem;
+  border-left: 3px solid rgb(var(--c-accent) / 0.65);
+  background: rgb(var(--c-surface2) / 0.7);
+  border-radius: 0 8px 8px 0;
+  color: rgb(var(--c-sub));
+}
+.md-preview code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.85em;
+  background: rgb(var(--c-surface2));
+  border: 1px solid rgb(var(--c-line));
+  border-radius: 4px;
+  padding: 0.05em 0.32em;
+}
+.md-preview hr {
+  border: 0;
+  border-top: 1px solid rgb(var(--c-line));
+  margin: 1rem 0;
+}
+
+/* İnce altı çizili vurgu — Lightbox/overlay geçiş yumuşaklığı */
+.overlay-backdrop {
+  background: rgb(var(--c-base) / 0.72);
+  backdrop-filter: blur(10px) saturate(120%);
+}
