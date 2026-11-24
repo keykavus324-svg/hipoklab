@@ -112,7 +112,7 @@ export function Sidebar({ currentView, onViewChange, collapsed, onToggleCollapse
         {!collapsed ? (
           <div className="rounded-xl border border-line bg-surface2/60 p-3">
             <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-accent">
-              <FlaskConical size={11} /> Faz 1 · Beta
+              <FlaskConical size={11} /> v3 · Tam Sürüm
             </p>
             <p className="mt-1.5 text-[11px] leading-relaxed text-faint">
               Kontrol paneli, kütüphane ve split-view çalışma masası aktif. Modüller zamanla

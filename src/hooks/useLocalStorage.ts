@@ -3,13 +3,22 @@ import { useCallback, useEffect, useState } from 'react';
 /**
  * localStorage ile senkron çalışan React state kancası.
  * Değer JSON olarak serileştirilir; depolama erişilemezse sessizce bellek içi kalır.
+ * `normalize` verilirse, depolamadan okunan değer kaynak sürümden geliyorsa
+ * (eksik alanlar içeren eski bir kalıcı durum gibi) bu işlevle sürüme uygun
+ * biçimde dönüştürülür — aksi halde uygulama çökebilir.
  */
-export function useLocalStorage<T>(key: string, initialValue: T) {
+export function useLocalStorage<T>(
+  key: string,
+  initialValue: T,
+  normalize?: (raw: unknown) => T,
+) {
   const [value, setValue] = useState<T>(() => {
     if (typeof window === 'undefined') return initialValue;
     try {
       const raw = window.localStorage.getItem(key);
-      return raw !== null ? (JSON.parse(raw) as T) : initialValue;
+      if (raw === null) return initialValue;
+      const parsed = JSON.parse(raw) as unknown;
+      return normalize ? normalize(parsed) : (parsed as T);
     } catch {
       return initialValue;
     }

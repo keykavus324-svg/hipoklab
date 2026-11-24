@@ -58,6 +58,93 @@ const DEFAULT_STATE: PersistedState = {
   studyLog: {},
 };
 
+/* Kalıcı durum nesnesi mi? */
+function isRecord(v: unknown): v is Record<string, unknown> {
+  return typeof v === 'object' && v !== null && !Array.isArray(v);
+}
+
+/**
+ * Kalıcı durumu güncel sürüme normalize eder.
+ * Eski sürümlerden (Faz 1/2) kalan kayıtlarda favorites/cardProgress/caseProgress/
+ * studyLog alanları bulunmaz; normalize edilmeden okunursa uygulama çöker.
+ * Eksik veya bozuk alanlar güvenli varsayılanlarla tamamlanır.
+ */
+function normalizeState(raw: unknown): PersistedState {
+  const r = isRecord(raw) ? raw : {};
+  const s = isRecord(r.settings) ? r.settings : {};
+  const lastRead = isRecord(r.lastRead) && typeof r.lastRead.id === 'string' ? r.lastRead : null;
+
+  // Kart ilerlemesi: her girişin sayısal alanları doğrulanır
+  const cardProgress: PersistedState['cardProgress'] = {};
+  if (isRecord(r.cardProgress)) {
+    for (const [cardId, p] of Object.entries(r.cardProgress)) {
+      if (!isRecord(p)) continue;
+      cardProgress[cardId] = {
+        interval: Number.isFinite(p.interval) ? Number(p.interval) : 0,
+        ease: Number.isFinite(p.ease) ? Math.min(2.8, Math.max(1.3, Number(p.ease))) : 2.5,
+        due: Number.isFinite(p.due) ? Number(p.due) : 0,
+        reps: Number.isFinite(p.reps) ? Number(p.reps) : 0,
+        lapses: Number.isFinite(p.lapses) ? Number(p.lapses) : 0,
+        lastReviewed: Number.isFinite(p.lastReviewed) ? Number(p.lastReviewed) : null,
+      };
+    }
+  }
+
+  // Vaka ilerlemesi
+  const caseProgress: PersistedState['caseProgress'] = {};
+  if (isRecord(r.caseProgress)) {
+    for (const [caseId, p] of Object.entries(r.caseProgress)) {
+      if (!isRecord(p)) continue;
+      const answers: Record<string, number> = {};
+      if (isRecord(p.answers)) {
+        for (const [qid, chosen] of Object.entries(p.answers)) {
+          if (Number.isFinite(chosen)) answers[qid] = Number(chosen);
+        }
+      }
+      caseProgress[caseId] = {
+        stepIndex: Number.isFinite(p.stepIndex) ? Math.max(0, Number(p.stepIndex)) : 0,
+        answers,
+        completed: p.completed === true,
+        completedAt: Number.isFinite(p.completedAt) ? Number(p.completedAt) : null,
+      };
+    }
+  }
+
+  // Çalışma defteri: YYYY-MM-DD -> dakika
+  const studyLog: Record<string, number> = {};
+  if (isRecord(r.studyLog)) {
+    for (const [day, minutes] of Object.entries(r.studyLog)) {
+      if (Number.isFinite(minutes)) studyLog[day] = Math.max(0, Number(minutes));
+    }
+  }
+
+  return {
+    settings: {
+      theme: s.theme === 'light' ? 'light' : 'dark',
+      sidebarCollapsed: s.sidebarCollapsed === true,
+      dailyGoal: Number.isFinite(s.dailyGoal) && Number(s.dailyGoal) > 0 ? Number(s.dailyGoal) : 3,
+      activeCommittee: typeof s.activeCommittee === 'string' ? s.activeCommittee : ALL_COMMITTEES_LABEL,
+      fontSizeStep: Number.isFinite(s.fontSizeStep) ? Number(s.fontSizeStep) : 1,
+    },
+    completed: isRecord(r.completed) ? (r.completed as PersistedState['completed']) : {},
+    lastRead: lastRead as PersistedState['lastRead'],
+    customResources: Array.isArray(r.customResources)
+      ? (r.customResources as PersistedState['customResources'])
+      : [],
+    pomodoroSessions: Number.isFinite(r.pomodoroSessions) ? Number(r.pomodoroSessions) : 0,
+    pomodoroDate:
+      typeof r.pomodoroDate === 'string' && r.pomodoroDate
+        ? r.pomodoroDate
+        : DEFAULT_STATE.pomodoroDate,
+    favorites: Array.isArray(r.favorites)
+      ? (r.favorites as unknown[]).filter((f): f is string => typeof f === 'string')
+      : [],
+    cardProgress,
+    caseProgress,
+    studyLog,
+  };
+}
+
 const PAGE_META: Record<ViewKey, { title: string; subtitle: string }> = {
   dashboard: {
     title: 'Kontrol Paneli',
@@ -82,7 +169,7 @@ const PAGE_META: Record<ViewKey, { title: string; subtitle: string }> = {
 };
 
 export default function App() {
-  const [persisted, setPersisted] = useLocalStorage<PersistedState>(STATE_KEY, DEFAULT_STATE);
+  const [persisted, setPersisted] = useLocalStorage<PersistedState>(STATE_KEY, DEFAULT_STATE, normalizeState);
   const [view, setView] = useState<ViewKey>('dashboard');
   const [activeResourceId, setActiveResourceId] = useState<string | null>(null);
   const [paletteOpen, setPaletteOpen] = useState(false);
@@ -302,8 +389,7 @@ export default function App() {
           setPersisted((prev) => ({
             ...DEFAULT_STATE,
             ...prev,
-            ...parsed.state,
-            settings: { ...DEFAULT_STATE.settings, ...(parsed.state?.settings ?? {}) },
+            ...normalizeState(parsed.state),
           }));
           if (parsed.notes) {
             writePrefixedStorage(NOTE_PREFIX, parsed.notes);
