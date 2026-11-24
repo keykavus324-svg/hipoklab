@@ -51,12 +51,17 @@ jobs:
 
       - name: "Pages kaynağını etkinleştir (branch: gh-pages)"
         # İlk dağıtımda Pages kapalıysa API ile etkinleştirmeyi dener;
-        # public depolarda gh-pages dalına push zaten otomatik yayına alır.
+        # yanıt adım özetine yazılır, hata olsa da dağıtımı durdurmaz.
         continue-on-error: true
         run: |
-          gh api -X POST "repos/${GITHUB_REPOSITORY}/pages" \
-            -f "source[branch]=gh-pages" -f "source[path]=/" || \
-          gh api -X PUT "repos/${GITHUB_REPOSITORY}/pages" \
-            -f "build_type=legacy" -f "source[branch]=gh-pages" -f "source[path]=/" || true
+          echo "Pages API yanıtı:" | tee -a "$GITHUB_STEP_SUMMARY"
+          RESP=$(gh api -X POST "repos/${GITHUB_REPOSITORY}/pages" \
+            -f "source[branch]=gh-pages" -f "source[path]=/" 2>&1) && STATUS=ok || STATUS=fail
+          echo "POST: $STATUS — $RESP" | tee -a "$GITHUB_STEP_SUMMARY"
+          if [ "$STATUS" = "fail" ]; then
+            RESP=$(gh api -X PUT "repos/${GITHUB_REPOSITORY}/pages" \
+              -f "build_type=legacy" -f "source[branch]=gh-pages" -f "source[path]=/" 2>&1) && STATUS=ok || STATUS=fail
+            echo "PUT: $STATUS — $RESP" | tee -a "$GITHUB_STEP_SUMMARY"
+          fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
