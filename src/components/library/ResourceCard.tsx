@@ -1,11 +1,13 @@
-import { ArrowUpRight, CheckCircle2, Clock, FileText } from 'lucide-react';
+import { ArrowUpRight, Bookmark, BookmarkCheck, CheckCircle2, Clock, FileText } from 'lucide-react';
 import { excerpt } from '../../data/libraryData';
 import type { LibraryResource } from '../../types/hipoklab';
 
 interface ResourceCardProps {
   resource: LibraryResource;
   completed: boolean;
+  favorite: boolean;
   onOpen: (id: string) => void;
+  onToggleFavorite: (id: string) => void;
 }
 
 const COURSE_ACCENT: Record<string, string> = {
@@ -16,15 +18,40 @@ const COURSE_ACCENT: Record<string, string> = {
   Patoloji: 'border-danger/30 bg-danger/10 text-danger',
 };
 
-export function ResourceCard({ resource, completed, onOpen }: ResourceCardProps) {
+export function ResourceCard({ resource, completed, favorite, onOpen, onToggleFavorite }: ResourceCardProps) {
   const accent = COURSE_ACCENT[resource.course] ?? 'border-line bg-surface2 text-sub';
 
   return (
-    <button
-      type="button"
+    <div
+      role="button"
+      tabIndex={0}
       onClick={() => onOpen(resource.id)}
-      className="group relative flex flex-col rounded-2xl border border-line bg-surface p-5 text-left shadow-panel transition duration-200 hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-float"
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onOpen(resource.id);
+        }
+      }}
+      className="group relative flex cursor-pointer flex-col rounded-2xl border border-line bg-surface p-5 text-left shadow-panel transition duration-200 hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-float"
     >
+      {/* Favori düğmesi */}
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggleFavorite(resource.id);
+        }}
+        aria-label={favorite ? 'Favorilerden çıkar' : 'Favorilere ekle'}
+        title={favorite ? 'Favorilerden çıkar' : 'Favorilere ekle'}
+        className={`absolute right-3.5 top-3.5 z-10 rounded-lg border p-1.5 transition ${
+          favorite
+            ? 'border-gold/40 bg-gold/15 text-gold'
+            : 'border-line bg-surface2/80 text-faint opacity-0 hover:text-gold group-hover:opacity-100'
+        }`}
+      >
+        {favorite ? <BookmarkCheck size={13} /> : <Bookmark size={13} />}
+      </button>
+
       {/* Üst etiketler */}
       <div className="flex items-center gap-1.5">
         <span className={`rounded-md border px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider ${accent}`}>
@@ -65,6 +92,6 @@ export function ResourceCard({ resource, completed, onOpen }: ResourceCardProps)
           </span>
         )}
       </div>
-    </button>
+    </div>
   );
 }

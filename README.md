@@ -24,14 +24,15 @@ npm run preview
 
 | Modül | Durum |
 | --- | --- |
-| Kontrol Paneli (günlük ilerleme, komite çubukları, high-yield spot, kaldığın yerden devam) | ✅ Aktif |
-| Akademik Kütüphane (dönem → kurul → ders → tür filtreleri + anlık arama) | ✅ Aktif |
+| Kontrol Paneli (günlük ilerleme, komite çubukları, high-yield spot, kaldığın yerden devam, çalışma ısı haritası + seri) | ✅ Aktif |
+| Akademik Kütüphane (dönem → kurul → ders → tür filtreleri + anlık arama, favoriler, sıralama) | ✅ Aktif |
 | Split-View Okuyucu (içindekiler, yazı boyutu, klinik kutular, tablolar) | ✅ Aktif |
 | Kişisel Not Defteri (localStorage otomatik kayıt, önizleme, .md indirme) | ✅ Aktif |
 | Yeni Kaynak Ekle / JSON Yedekle-İçe Aktar | ✅ Aktif |
 | Görsel Atlas (4 SVG diyagram, inceleme / kendini test et / hoca sunum modları) | ✅ Aktif |
-| Pomodoro (25/5) + Ctrl/Cmd+K Global Arama Paleti (anatomik yapı arama dahil) | ✅ Aktif |
-| Sınav & Flashcard · Klinik Vakalar | 🕓 Yakında |
+| Sınav & Flashcard (SM-2 aralıklı tekrar, 5 ders destesi + spot kartlar, oturum özeti) | ✅ Aktif |
+| Klinik Vakalar (6 interaktif senaryo, anamnezden tedaviye adım adım karar verme) | ✅ Aktif |
+| Pomodoro (25/5) + Ctrl/Cmd+K Global Arama Paleti (yapı, deste ve vaka arama dahil) | ✅ Aktif |
 
 ## Kısayollar
 

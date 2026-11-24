@@ -2,18 +2,23 @@ import {
   BookOpen,
   Download,
   FilePlus2,
+  GraduationCap,
   LayoutDashboard,
   Moon,
   Shapes,
+  Stethoscope,
   Sun,
   Timer,
   Upload,
 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AtlasView, AtlasTarget } from './components/atlas/AtlasView';
+import { CasesView } from './components/cases/CasesView';
+import { CasePlayer } from './components/cases/CasePlayer';
 import { CommandAction, CommandPalette } from './components/common/CommandPalette';
 import { ToastItem, ToastStack } from './components/common/Toast';
 import { Dashboard } from './components/dashboard/Dashboard';
+import { ExamView } from './components/exam/ExamView';
 import { AddResourceModal } from './components/library/AddResourceModal';
 import { EMPTY_FILTERS, LibraryFilters } from './components/library/FilterBar';
 import { LibraryView } from './components/library/LibraryView';
@@ -26,9 +31,11 @@ import {
   getAllResources,
 } from './data/libraryData';
 import { ATLAS_DIAGRAMS } from './data/atlasData';
+import { CLINICAL_CASES, getCaseById } from './data/clinicalCases';
+import { FLASHCARD_DECKS, defaultCardProgress, getDueCardIds, rateCard } from './data/flashcardData';
 import { useLocalStorage, readPrefixedStorage, writePrefixedStorage } from './hooks/useLocalStorage';
 import { usePomodoro } from './hooks/usePomodoro';
-import type { LibraryResource, PersistedState } from './types/hipoklab';
+import type { CardRating, CaseProgress, LibraryResource, PersistedState } from './types/hipoklab';
 
 const STATE_KEY = 'hipoklab:state';
 
@@ -45,6 +52,10 @@ const DEFAULT_STATE: PersistedState = {
   customResources: [],
   pomodoroSessions: 0,
   pomodoroDate: new Date().toISOString().slice(0, 10),
+  favorites: [],
+  cardProgress: {},
+  caseProgress: {},
+  studyLog: {},
 };
 
 const PAGE_META: Record<ViewKey, { title: string; subtitle: string }> = {
@@ -60,6 +71,14 @@ const PAGE_META: Record<ViewKey, { title: string; subtitle: string }> = {
     title: 'Görsel Atlas',
     subtitle: 'İnteraktif anatomik ve histolojik diyagramlar',
   },
+  exam: {
+    title: 'Sınav & Flashcard',
+    subtitle: 'SM-2 aralıklı tekrar sistemi · Aktif öğrenme',
+  },
+  cases: {
+    title: 'Klinik Vakalar',
+    subtitle: 'Anamnezden tedaviye adım adım karar verme pratiği',
+  },
 };
 
 export default function App() {
@@ -73,10 +92,12 @@ export default function App() {
   const [notesVersion, setNotesVersion] = useState(0);
   const [atlasTarget, setAtlasTarget] = useState<AtlasTarget | null>(null);
   const [presentationMode, setPresentationMode] = useState(false);
+  const [activeCaseId, setActiveCaseId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const toastIdRef = useRef(1);
 
-  const { settings, completed, lastRead, customResources } = persisted;
+  const { settings, completed, lastRead, customResources, favorites, cardProgress, caseProgress, studyLog } =
+    persisted;
 
   /* ---------------------------------------------------------------------- */
   /* Bildirimler                                                            */
@@ -119,15 +140,15 @@ export default function App() {
     useCallback(
       (finishedMode: 'work' | 'break') => {
         if (finishedMode === 'work') {
-          setPersisted((prev) => {
-            const today = new Date().toISOString().slice(0, 10);
-            return {
-              ...prev,
-              pomodoroSessions:
-                prev.pomodoroDate === today ? prev.pomodoroSessions + 1 : 1,
-              pomodoroDate: today,
-            };
-          });
+          const today = new Date().toISOString().slice(0, 10);
+          setPersisted((prev) => ({
+            ...prev,
+            pomodoroSessions:
+              prev.pomodoroDate === today ? prev.pomodoroSessions + 1 : 1,
+            pomodoroDate: today,
+            // Odak seansı çalışma defterine 25 dk olarak işlensin
+            studyLog: { ...prev.studyLog, [today]: (prev.studyLog[today] ?? 0) + 25 },
+          }));
           notify('Odaklanma seansı tamamlandı! Kısa mola zamanı. ☕', 'info');
         } else {
           notify('Mola bitti — yeni odaklanma seansına hazırsınız.', 'info');
@@ -184,6 +205,63 @@ export default function App() {
     },
     [setPersisted, notify],
   );
+
+  /* ---------------------------------------------------------------------- */
+  /* Favoriler                                                              */
+  /* ---------------------------------------------------------------------- */
+  const toggleFavorite = useCallback(
+    (id: string) => {
+      setPersisted((prev) => {
+        const isFav = prev.favorites.includes(id);
+        return {
+          ...prev,
+          favorites: isFav ? prev.favorites.filter((f) => f !== id) : [id, ...prev.favorites],
+        };
+      });
+    },
+    [setPersisted],
+  );
+
+  /* ---------------------------------------------------------------------- */
+  /* Flashcard (SM-2)                                                       */
+  /* ---------------------------------------------------------------------- */
+  const handleRateCard = useCallback(
+    (cardId: string, rating: CardRating) => {
+      setPersisted((prev) => ({
+        ...prev,
+        cardProgress: {
+          ...prev.cardProgress,
+          [cardId]: rateCard(prev.cardProgress[cardId] ?? defaultCardProgress(), rating),
+        },
+      }));
+    },
+    [setPersisted],
+  );
+
+  // Çalışma defterine dakika ekle (bugünün YYYY-MM-DD anahtarıyla)
+  const studyLogBump = useCallback(
+    (minutes: number) => {
+      if (minutes <= 0) return;
+      const today = new Date().toISOString().slice(0, 10);
+      setPersisted((prev) => ({
+        ...prev,
+        studyLog: { ...prev.studyLog, [today]: (prev.studyLog[today] ?? 0) + minutes },
+      }));
+    },
+    [setPersisted],
+  );
+
+  /* ---------------------------------------------------------------------- */
+  /* Klinik vakalar                                                         */
+  /* ---------------------------------------------------------------------- */
+  const handleCaseProgress = useCallback(
+    (caseId: string, progress: CaseProgress) => {
+      setPersisted((prev) => ({ ...prev, caseProgress: { ...prev.caseProgress, [caseId]: progress } }));
+    },
+    [setPersisted],
+  );
+
+  const activeCase = useMemo(() => (activeCaseId ? getCaseById(activeCaseId) : null), [activeCaseId]);
 
   /* ---------------------------------------------------------------------- */
   /* JSON Yedekleme / İçe Aktarma                                           */
@@ -311,6 +389,53 @@ export default function App() {
         },
       },
       {
+        id: 'goto-exam',
+        label: 'Sınav & Flashcard’a Git',
+        hint: 'Sayfa',
+        icon: GraduationCap,
+        section: 'Gezinme',
+        run: () => {
+          setView('exam');
+          setActiveResourceId(null);
+        },
+      },
+      {
+        id: 'goto-cases',
+        label: 'Klinik Vakalar’a Git',
+        hint: 'Sayfa',
+        icon: Stethoscope,
+        section: 'Gezinme',
+        run: () => {
+          setView('cases');
+          setActiveResourceId(null);
+        },
+      },
+      ...FLASHCARD_DECKS.map<CommandAction>((d) => ({
+        id: `study-deck-${d.id}`,
+        label: `“${d.title}” destesiyle çalış`,
+        hint: `${d.cards.length} kart · ${d.course}`,
+        icon: GraduationCap,
+        section: 'Çalışma',
+        keywords: `${d.title} flashcard deste kart`,
+        run: () => {
+          setView('exam');
+          setActiveResourceId(null);
+        },
+      })),
+      ...CLINICAL_CASES.map<CommandAction>((c) => ({
+        id: `case-${c.id}`,
+        label: `Vaka: ${c.title}`,
+        hint: c.specialty,
+        icon: Stethoscope,
+        section: 'Çalışma',
+        keywords: `${c.title} ${c.specialty} ${c.tags.join(' ')} vaka`,
+        run: () => {
+          setView('cases');
+          setActiveResourceId(null);
+          setActiveCaseId(c.id);
+        },
+      })),
+      {
         id: 'new-resource',
         label: 'Yeni Kaynak Ekle',
         hint: 'Eylem',
@@ -363,6 +488,12 @@ export default function App() {
     openResource,
   ]);
 
+  // Bugünkü tekrar bekleyen kart sayısı (Dashboard için)
+  const dueCardCount = useMemo(() => {
+    const allCards = FLASHCARD_DECKS.flatMap((d) => d.cards);
+    return getDueCardIds(allCards, cardProgress).length;
+  }, [cardProgress]);
+
   /* ---------------------------------------------------------------------- */
   /* Render                                                                 */
   /* ---------------------------------------------------------------------- */
@@ -375,6 +506,7 @@ export default function App() {
           onViewChange={(v) => {
             setView(v);
             setActiveResourceId(null);
+            setActiveCaseId(null);
           }}
           collapsed={settings.sidebarCollapsed}
           onToggleCollapsed={() =>
@@ -390,8 +522,20 @@ export default function App() {
       <div className="flex min-w-0 flex-1 flex-col">
         {!presentationMode ? (
           <TopBar
-            title={activeResource ? activeResource.title : PAGE_META[view].title}
-            subtitle={activeResource ? `${activeResource.course} · Split-View Okuyucu` : PAGE_META[view].subtitle}
+            title={
+              activeResource
+                ? activeResource.title
+                : activeCase
+                  ? activeCase.title
+                  : PAGE_META[view].title
+            }
+            subtitle={
+              activeResource
+                ? `${activeResource.course} · Split-View Okuyucu`
+                : activeCase
+                  ? `${activeCase.specialty} · Klinik Vaka`
+                  : PAGE_META[view].subtitle
+            }
             theme={settings.theme}
             onToggleTheme={toggleTheme}
             activeCommittee={settings.activeCommittee}
@@ -416,18 +560,45 @@ export default function App() {
               lastRead={lastRead}
               activeCommittee={settings.activeCommittee}
               dailyGoal={settings.dailyGoal}
+              studyLog={studyLog}
+              cardProgress={cardProgress}
+              dueCardCount={dueCardCount}
               onOpenResource={(id) => {
                 setView('library');
                 openResource(id);
               }}
               onNavigateLibrary={() => setView('library')}
+              onOpenExam={() => setView('exam')}
+              onOpenCases={() => setView('cases')}
             />
           ) : view === 'atlas' ? (
             <AtlasView target={atlasTarget} onPresentationChange={setPresentationMode} />
+          ) : view === 'exam' ? (
+            <ExamView
+              cardProgress={cardProgress}
+              onRateCard={handleRateCard}
+              studyLogBump={studyLogBump}
+            />
+          ) : view === 'cases' ? (
+            activeCase ? (
+              <CasePlayer
+                clinicalCase={activeCase}
+                progress={caseProgress[activeCase.id]}
+                onProgress={(p) => handleCaseProgress(activeCase.id, p)}
+                onBack={() => setActiveCaseId(null)}
+              />
+            ) : (
+              <CasesView
+                caseProgress={caseProgress}
+                onOpenCase={(id) => setActiveCaseId(id)}
+              />
+            )
           ) : (
             <LibraryView
               resources={allResources}
               completed={completed}
+              favorites={favorites}
+              onToggleFavorite={toggleFavorite}
               filters={filters}
               onFiltersChange={setFilters}
               onOpenResource={openResource}

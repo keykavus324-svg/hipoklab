@@ -7,6 +7,7 @@ import {
   Flame,
   RefreshCw,
   Sparkles,
+  Stethoscope as StethoscopeIcon,
   Target,
   TrendingUp,
 } from 'lucide-react';
@@ -17,8 +18,9 @@ import {
   HIGH_YIELD_SPOTS,
   excerpt,
 } from '../../data/libraryData';
-import type { LibraryResource } from '../../types/hipoklab';
+import type { CardProgress, LibraryResource } from '../../types/hipoklab';
 import { RichText } from '../common/Markdown';
+import { StudyHeatmap } from './StudyHeatmap';
 
 interface DashboardProps {
   resources: LibraryResource[];
@@ -26,8 +28,13 @@ interface DashboardProps {
   lastRead: { id: string; at: number } | null;
   activeCommittee: string;
   dailyGoal: number;
+  studyLog: Record<string, number>;
+  cardProgress: Record<string, CardProgress>;
+  dueCardCount: number;
   onOpenResource: (id: string) => void;
   onNavigateLibrary: () => void;
+  onOpenExam: () => void;
+  onOpenCases: () => void;
 }
 
 const DAY_LABELS = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
@@ -48,8 +55,13 @@ export function Dashboard({
   lastRead,
   activeCommittee,
   dailyGoal,
+  studyLog,
+  cardProgress,
+  dueCardCount,
   onOpenResource,
   onNavigateLibrary,
+  onOpenExam,
+  onOpenCases,
 }: DashboardProps) {
   // Her yüklemede rastgele bir spot — "Yenile" ile yeniden çekilir
   const [spotIndex, setSpotIndex] = useState(() => Math.floor(Math.random() * HIGH_YIELD_SPOTS.length));
@@ -293,6 +305,72 @@ export function Dashboard({
               {spot.tag}
             </span>
             <span className="truncate text-[11px] text-faint">{spot.source}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Çalışma ritmi + bugünün planı */}
+      <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-5">
+        <div className="lg:col-span-3">
+          <StudyHeatmap studyLog={studyLog} weeks={14} />
+        </div>
+
+        {/* Bugünün çalışma planı */}
+        <div className="rounded-2xl border border-line bg-surface p-6 shadow-panel lg:col-span-2">
+          <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-accent">
+            <Target size={12} /> Bugünün Çalışma Planı
+          </p>
+
+          {/* Tekrar bekleyen kartlar */}
+          <button
+            type="button"
+            onClick={onOpenExam}
+            className="mt-4 flex w-full items-center gap-3 rounded-xl border border-line bg-surface2/60 p-3.5 text-left transition hover:border-accent/40"
+          >
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-azure/30 bg-azure/12 text-azure">
+              <RefreshCw size={17} />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-[12px] font-semibold text-fg">
+                {dueCardCount > 0 ? `${dueCardCount} flashcard tekrar bekliyor` : 'Tekrar bekleyen kart yok'}
+              </p>
+              <p className="text-[10px] text-faint">
+                {dueCardCount > 0
+                  ? 'Aralıklı tekrar takviminize göre bugünün kartları hazır'
+                  : 'Yeni bir oturumla kartlarınızı pekiştirebilirsiniz'}
+              </p>
+            </div>
+            <ArrowRight size={15} className="shrink-0 text-faint" />
+          </button>
+
+          {/* Klinik vaka CTA */}
+          <button
+            type="button"
+            onClick={onOpenCases}
+            className="mt-2.5 flex w-full items-center gap-3 rounded-xl border border-line bg-surface2/60 p-3.5 text-left transition hover:border-accent/40"
+          >
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-danger/30 bg-danger/12 text-danger">
+              <StethoscopeIcon size={17} />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-[12px] font-semibold text-fg">Bir klinik vaka çöz</p>
+              <p className="text-[10px] text-faint">Anamnezden tedaviye adım adım karar verme pratiği</p>
+            </div>
+            <ArrowRight size={15} className="shrink-0 text-faint" />
+          </button>
+
+          {/* Kart istatistikleri */}
+          <div className="mt-3 grid grid-cols-2 gap-2.5">
+            <div className="rounded-xl border border-line bg-surface2/50 p-3">
+              <p className="text-[9.5px] font-semibold uppercase tracking-wider text-faint">Toplam Kart</p>
+              <p className="mt-1 text-[16px] font-semibold text-fg">{Object.keys(cardProgress).length}</p>
+            </div>
+            <div className="rounded-xl border border-line bg-surface2/50 p-3">
+              <p className="text-[9.5px] font-semibold uppercase tracking-wider text-faint">Ustalaşılan</p>
+              <p className="mt-1 text-[16px] font-semibold text-accent">
+                {Object.values(cardProgress).filter((p) => p.interval >= 21).length}
+              </p>
+            </div>
           </div>
         </div>
       </div>
