@@ -197,6 +197,42 @@ export const HIGH_YIELD_SPOTS: HighYieldSpot[] = [
     source: 'İnflamasyon ve Doku Onarımı',
     tag: 'Patoloji',
   },
+  {
+    id: 'hy-11',
+    text: 'HbA1c (glike hemoglobin), eritrosit yaşam süresi (yaklaşık 3 ay) boyunca glukozun hemoglobine eklenmesiyle oluşur; son 2-3 aylık ortalama glisemiyi yansıtır ve tedavi uyumunun en objektif göstergesidir.',
+    source: 'Diabetes Mellitus: Patofizyoloji, Tanı ve Tedavi',
+    tag: 'Biyokimya',
+  },
+  {
+    id: 'hy-12',
+    text: 'Oksijen-hemoglobin dissosiyasyon eğrisi asidoz, hiperkapni, ateş ve 2,3-BPG artışında sağa kayar (dokuya O₂ bırakımı kolaylaşır); alkaloz, hipotermi ve karbonmonoksit zehirlenmesinde sola kayar.',
+    source: 'Solunum Fizyolojisi: Ventilasyon, Perfüzyon ve Gaz Değişimi',
+    tag: 'Fizyoloji',
+  },
+  {
+    id: 'hy-13',
+    text: 'Demir eksikliği anemisinde ferritin düşük, TIBC yüksek ve RDW yükselir; talasemi minörde ise ferritin normal, HbA2 (%3.5 üzeri) artmış ve hedef hücreler görülür. Bu iki mikrositer aneminin ayrımında en klasik laboratuvar imzasıdır.',
+    source: 'Anemiler: Mikrositer, Normositer ve Makrositer Yaklaşım',
+    tag: 'Patoloji',
+  },
+  {
+    id: 'hy-14',
+    text: 'Gilbert sendromu toplumda en sık görülen iyi huylu hiperbilirubinemidir; UGT enzim aktivitesinde hafif azalma nedeniyle açlık ve stresle indirekt bilirubin yükselir. Kolestatik sarılıkla karıştırılmamalı, tedavi gerektirmez.',
+    source: 'Karaciğer Histolojisi ve Bilirubin Metabolizması',
+    tag: 'Histoloji',
+  },
+  {
+    id: 'hy-15',
+    text: 'Rotator manşet dört kastan oluşur: Supraspinatus, İnfraspinatus, Teres minor, Subskapularis (SITS). En sık yırtılan tendon supraspinatusunkidir; abduksiyonun ilk 15 derecesini bu kas başlatır.',
+    source: 'Kas ve Eklemler: Klinik Anatomi Temelleri',
+    tag: 'Anatomi',
+  },
+  {
+    id: 'hy-16',
+    text: 'Enzim kinetiğinin iki altın cümlesi: Kompetitif inhibitörde Km artar, Vmax değişmez; non-kompetitif inhibitörde Vmax düşer, Km değişmez. Bu ayrım sınav sorularının merkezindedir.',
+    source: 'Vitaminler, Mineraller ve Enzimler',
+    tag: 'Biyokimya',
+  },
 ];
 
 /* ===========================================================================
@@ -1201,6 +1237,586 @@ export const ENDOCRINE_SPOT: LibraryResource = {
   ],
 };
 
+const DIABETES: LibraryResource = {
+  id: 'diabetes-mellitus',
+  title: 'Diabetes Mellitus: Patofizyoloji, Tanı ve Tedavi',
+  subtitle: 'Tip 1–2 diyabet, metabolik komplikasyonlar, tanı kriterleri ve oral antidiyabetiklerin mekanizmaları',
+  term: 'Dönem 3',
+  committee: COMMITTEES[4],
+  course: 'Biyokimya',
+  resourceType: 'Ders Notu',
+  author: 'HipokLab Akademik Kurul',
+  updatedAt: '2026-11-24',
+  minutes: 28,
+  blocks: [
+    h('Giriş: Diyabet Nedir?'),
+    p(
+      'Diabetes mellitus (DM), insülin salınımı, insülin etkisi veya her ikisinin bozulması sonucu ortaya çıkan kronik hiperglisemi ile karakterize metabolik bir hastalıktır. Uzun süredir devam eden hiperglisemi; göz, böbrek, sinir ve kardiyovasküler sistemde geri dönüşsüz hasara yol açar. Diyabet dünyada en sık görülen endokrin hastalıktır ve tıp eğitiminde hem biyokimya hem iç hastalıkları açısından kilit konudur.',
+    ),
+    p(
+      'Normal fizyolojide karbonhidrat alımından sonra pankreasın beta hücreleri insülin salgılar; insülin kas ve yağ dokusunda glukoz alımını (GLUT4 translokasyonu) artırırken karaciğerde glukoneogenez ve glikojenolizi baskılar. Bu düzen bozulduğunda dokular "açlık içinde bolluk" (starvation in the midst of plenty) tablosu yaşar: glukoz hücrelere giremez, hücreler enerji için yağ asidi ve proteini parçalar.',
+    ),
+    h('Diyabetin Tipleri'),
+    table(
+      ['Özellik', 'Tip 1 DM', 'Tip 2 DM', 'Gestasyonel DM'],
+      [
+        ['Başlangıç', 'Çocukluk/ergenlik, ani', 'Genellikle 40 yaş üstü, sinsi', 'Gebelik 2. trimester'],
+        ['Patogenez', 'Otoimmün beta hücre yıkımı', 'İnsülin direnci + gizli insülin yetmezliği', 'Plasental hormonlara bağlı direnç'],
+        ['Vücut tipi', 'Genellikle zayıf', 'Genellikle obez (%80)', 'Değişken'],
+        ['Keton asidoz', 'Sık (ilk bulgu olabilir)', 'Nadir (stres altında)', 'Nadir'],
+        ['C-peptid', 'Düşük/ölçülemez', 'Normal veya yüksek başta', 'Normal'],
+        ['Tedavi', 'İnsülin (zorunlu)', 'Diyet + oral ajanlar ± insülin', 'Diyet ± insülin'],
+      ],
+      'Diyabet tiplerinin karşılaştırılması',
+    ),
+    h('Tip 1 Diyabetin Patofizyolojisi'),
+    p(
+      'Tip 1 diabetes mellitus (T1DM), otoimmün mekanizmayla pankreasın Langerhans adacıklarındaki beta hücrelerinin yıkımına bağlı mutlak insülin eksikliğidir. Yıkım, klinik semptomlar başlamadan yıllar önce başlar; semptomlar beta hücrelerinin yaklaşık %80-90\'ı kaybedildiğinde ortaya çıkar. Genetik yatkınlık HLA-DR3 ve HLA-DR4 ile ilişkilidir; çevresel tetikleyiciler arasında viral enfeksiyonlar (Coxsackie B) ve süt proteinlerine erken maruziyet öne sürülmüştür.',
+    ),
+    li(
+      'Otoimmün belirteçler: GAD65 (glutamik asit dekarboksilaz) antikorları, insülin otoantikorları (IAA), IA-2 ve ZnT8 antikorları.',
+      'Langerhans adacıklarında lenfositik infiltrasyon (insülitis) histolojik bulgudur.',
+      'Mutlak insülin eksikliği → lipoliz artar → serbest yağ asitleri karaciğere taşınır → ketogenez → diyabetik ketoasidoz (DKA).',
+    ),
+    clinical(
+      '18 yaşında zayıf bir hasta; poliüri, polidipsi, kilo kaybı ve karın ağrısı ile başvuruyor. Nefesinde elma kokusu var, solunum derin ve hızlı (Kussmaul). Açlık glukozu 380 mg/dL, kan pH 7.18, bikarbonat 8 mEq/L, ketonlar pozitif. Bu tablo Tip 1 DM\'e bağlı diyabetik ketoasidozdur; tedavinin temeli IV insülin + sıvı + potasyum replasyonudur.',
+      'Klasik Sunum',
+    ),
+    h('Tip 2 Diyabet ve İnsülin Direnci'),
+    p(
+      'Tip 2 diabetes mellitus (T2DM), periferik dokularda insülin direnci ve buna eşlik eden gizli (relatif) insülin yetmezliğidir. İnsülin direncinin merkezinde visceral obezite yer alır: adipositlerden salınan proinflamatuar sitokinler (TNF-α, IL-6) ve azalmış adiponektin, insülin sinyal yolunu (insülin reseptörü substratı-1, IRS-1) baskılar. Metabolik sendrom; santral obezite, hipertansiyon, dislipidemi (yüksek trigliserid, düşük HDL) ve hiperglisemi üçlü/dörtlüsüdür.',
+    ),
+    li(
+      'Erken evre: beta hücreleri direnci yenmek için hiperinsülinemi üretir (gizli diyabet, glukoz intoleransı).',
+      'Geç evre: beta hücre yorgunluğu (glukolipotoksisite) → insülin salınımı azalır, açlık glukozu yükselir.',
+      'Karaciğerde glukoneogenez artar (foxa2 ve PEPCK regülasyonu bozulur); kastaki glukoz alımı azalır.',
+    ),
+    h('Hipergliseminin Biyokimyasal Sonuçları'),
+    p(
+      'Kronik hiperglisemi, glukozun insülinsiz metabolize edildiği dokularda (lens, retina, böbrek, sinir hücreleri) dört ana toksik yolak başlatır. Bu yolların hepsi son ortak ürünlerde birleşir: reaktif oksijen türleri (ROS) ve ileri glikasyon ürünleri (AGE).',
+    ),
+    li(
+      'Poliol (sorbitol) yolağı: Aldoz redüktaz glukozu sorbitole indirger; sorbitol birikimi osmotik hasara yol açar → katarakt, periferik nöropati.',
+      'Protein kinaz C (PKC) aktivasyonu: Diassilgliserol (DAG) artışı vasküler geçirgenliği ve VEGF\'i artırır → retinopati, nefropati.',
+      'HEKSOZAMİN yolağı: Glukozamin-6-fosfat birikimi TGF-β üretimini uyarır → glomerüler fibrozis.',
+      'İleri glikasyon ürünleri (AGE): HbA1c bu reaksiyonun bir ürünüdür; AGE\'ler RAGE reseptörüne bağlanarak inflamasyon ve aterosklerozu besler.',
+    ),
+    spot(
+      'HbA1c (glike hemoglobin), eritrosit yaşam süresi (yaklaşık 120 gün / 3 ay) boyunca glukozun hemoglobine eklenmesiyle oluşur. Son 2-3 aylık ortalama glisemiyi yansıtır ve tedavi uyumunun en objektif göstergesidir.',
+    ),
+    h('Tanı Kriterleri'),
+    table(
+      ['Test', 'Normal', 'Diyabet Tanısı', 'Pre-diyabet'],
+      [
+        ['Açlık plazma glukozu (FPG)', '<100 mg/dL', '≥126 mg/dL', '100-125 mg/dL (IFG)'],
+        ['OGTT 2. saat glukoz', '<140 mg/dL', '≥200 mg/dL', '140-199 mg/dL (IGT)'],
+        ['HbA1c', '<%5.7', '≥%6.5', '%5.7-6.4'],
+        ['Rastgele glukoz + semptom', '—', '≥200 mg/dL', '—'],
+      ],
+      'ADA tanı kriterleri (semptom yoksa iki test tekrarlanmalıdır)',
+    ),
+    spot(
+      'Diyabet tanısı için klasik üçlü semptom (polidipsi, poliüri, kilo kaybı) varsa rastgele glukoz ≥200 mg/dL yeterlidir. Semptom yoksa FPG, OGTT veya HbA1c testlerinden en az ikisi tanı eşiğini geçmelidir.',
+    ),
+    h('Akut Komplikasyonlar: DKA ve HHS'),
+    p(
+      'Diyabetik ketoasidoz (DKA), Tip 1\'de mutlak insülin eksikliğinin sonucudur: lipoliz → keton cisimcileri (asetoasetat, beta-hidroksibütirat, aseton) → yüksek anyon açıklığı metabolik asidoz. Triadı: hiperglisemi (>250 mg/dL), ketonemi/ketonüri ve metabolik asidoz (pH <7.3). Hiperosmolar hiperglisemik durum (HHS) ise Tip 2\'de görülür; glukoz >600 mg/dL, şiddetli dehidratasyon ve bilinç bulanıklığı olur ancak belirgin keton asidoz yoktur.',
+    ),
+    li(
+      'DKA tedavisi: IV izotonik sıvı → IV insülin infüzyonu (potasyum >3.3 mEq/L iken) → potasyum takviyesi → bikarbonat yalnızca pH <6.9\'da.',
+      'HHS tedavisi: agresif sıvı replasyonu esastır; insülin dozu DKA\'ya göre daha düşüktür.',
+      'Tedavinin en tehlikeli hatası: potasyum takviyesiz insülin vermek (hipokalemik arrest).',
+    ),
+    h('Kronik Komplikasyonlar'),
+    li(
+      'Mikrovasküler: Retinopati (en sık körlük nedeni), nefropati (en sık son dönem böbrek yetmezliği nedeni), nöropati (gastroparez, ayak ülserleri).',
+      'Makrovasküler: Koroner arter hastalığı, serebrovasküler hastalık, periferik arter hastalığı — diyabetlilerde kardiyovasküler mortalite 2-4 kat artmıştır.',
+      'Diabetik ayak: Periferik nöropati + nöropatik ülser + enfeksiyon + iskemi üçlüsü; en sık neden travmadır, en sık yerleşim başparmak ve basma noktalarıdır.',
+    ),
+    h('Tedavi: Oral Antidiyabetikler ve İnsülinler'),
+    table(
+      ['Ajan', 'Mekanizma', 'Önemli not'],
+      [
+        ['Metformin (biguanid)', 'Karaciğer glukoneogenezini baskılar (AMPK aktivasyonu)', 'İlk basamak; kilo aldırmaz; laktik asidoz riski; GFR <30\'da kontrendike'],
+        ['Sülfonilüreler (glipizid)', 'Pankreas beta hücresinde K-ATP kanalını kapatır → insülin salınımı', 'Hipoglisemi + kilo artışı yapar'],
+        ['Tiazolidindionlar (pioglitazon)', 'PPAR-γ agonisti → yağ dokusunda insülin duyarlılığı', 'Ödem, kemik kırığı, kalp yetmezliği riski'],
+        ['SGLT2 inhibitörleri (empagliflozin)', 'Proksimal tübülde glukoz geri emilimini bloke eder', 'Glikozüri; kilo kaybı, kardiyorenal koruma; genital enfeksiyon'],
+        ['GLP-1 agonistleri (liraglutid)', 'İnkretin etkisi: glukoz bağımlı insülin salınımı, mide boşalımı yavaşlaması', 'Kilo kaybı; pankreatit riski'],
+        ['Akarboz', 'İnce bağırsakta alfa-glukozidaz inhibisyonu', 'Şişkinlik; postprandial glisemiyi düzeltir'],
+      ],
+      'Oral ve enjekte edilebilir antidiyabetiklerin özeti',
+    ),
+    spot(
+      'Metformin, laktik asidoz yapabilen tek oral antidiyabetiktir (karaciğerde laktat klirensini azaltır); bu yüzden kontrast madde uygulanacak ve ciddi böbrek yetmezliği olan hastalarda kesilir. Sülfonilüreler ise hipoglisemi yapan tek sınıftır.',
+    ),
+    clinical(
+      'Obez, 55 yaşında bir hasta; HbA1c %8.2, eGFR 55 ml/dk. Metformin ilk basamaktır. HbA1c hedefe (%7) ulaşmazsa ikinci ajan eklenir: kardiyovasküler hastalık varsa GLP-1 agonisti veya SGLT2 inhibitörü; hipoglisemi riski istenmiyorsa sülfonilüre yerine DPP-4 inhibitörü tercih edilir.',
+      'Tedavi Basamakları',
+    ),
+    h('Gestasyonel Diyabet ve İlaç Notları'),
+    p(
+      'Gestasyonel diyabet mellitus (GDM), gebelikte ilk kez saptanan glukoz intoleransıdır. Plasental hormonlar (östrojen, progesteron, HPL) insülin direncini artırır; tedavide ilk basamak diyet ve egzersizdir, yetersiz kalırsa insülin tek güvenilir seçenektir (oral ajanlar gebelikte tercih edilmez). GDM, anne ve fetusta makrozomi, doğum travması ve yenidoğan hipoglisemisi riskini artırır; anne ileride T2DM geliştirme adayıdır.',
+    ),
+    spot(
+      'İki klasik isim sorusu: (1) İnsülin ilk kez Banting ve Best tarafından 1921\'de keşfedilmiştir. (2) İnsülin, proinsülin (C-peptid + A ve B zincirleri) şeklinde sentezlenir; C-peptid ölçümü eksojen insülin kullanımından endojen salınımı ayırt eder — C-peptid yüksekse pankreas hâlâ insülin üretiyordur.',
+    ),
+  ],
+};
+
+const RESPIRATORY: LibraryResource = {
+  id: 'solunum-fizyolojisi',
+  title: 'Solunum Fizyolojisi: Ventilasyon, Perfüzyon ve Gaz Değişimi',
+  subtitle: 'Solunum mekaniği, alveoler difüzyon, oksijen-hemoglobin eğrisi ve V/Q ilişkisinin klinik yorumu',
+  term: 'Dönem 2',
+  committee: COMMITTEES[2],
+  course: 'Fizyoloji',
+  resourceType: 'Ders Notu',
+  author: 'HipokLab Akademik Kurul',
+  updatedAt: '2026-11-24',
+  minutes: 26,
+  blocks: [
+    h('Giriş: Solunum Sisteminin Görevi'),
+    p(
+      'Solunum sisteminin temel görevi, atmosferden oksijen (O₂) alıp karbondioksiti (CO₂) dışarı vermektir. Bu süreç dört aşamada gerçekleşir: ventilasyon (hava akımı), alveollerde gaz değişimi (difüzyon), perfüzyon (pulmoner dolaşım) ve doku düzeyinde gaz alışverişi. Herhangi bir aşamanın bozulması hipoksemi veya hipernapninin (hiperkapni) klinik tablolarını üretir.',
+    ),
+    h('Solunum Mekaniği'),
+    p(
+      'İnspirasyon aktif bir süreçtir: diyafram ve eksternal interkostal kaslar kasılır, toraks hacmi artar, intrapleural basınç −5 cmH₂O\'dan −8 cmH₂O\'ya düşer ve hava akciğere girer. Ekspirasyon normalde pasiftir: akciğerin elastik geri çekme kuvveti havayı dışarı iter. Zorlu ekspirasyonda internal interkostal ve karın kasları devreye girer.',
+    ),
+    li(
+      'Uyumluluk (compliance, C = ΔV/ΔP): Akciğerin genişleme kolaylığı. Yaşlanma ve emfizemde artar; fibrozis ve ARDS\'de azalır.',
+      'Elastans (compliance\'ın tersi): Elastin ve kollajen liflerden kaynaklanır.',
+      'Surfactan: Tip II pnömositlerce salgılanan dipalmitoilfosfatidilkolin; alveoler yüzey gerilimini düşürerek atelektaziyi önler. Yenidoğanlarda eksikliği (NRDS / Hyalin membran hastalığı) tablosuna yol açar.',
+      'Yüzey gerilimi yasası (Laplace): P = 2T/r — küçük alveoller çökmeye eğilimlidir; surfaktan bu eğilimi dengeler ve küçük alveolleri stabil tutar.',
+      'Ölü hacim (dead space): Hava yollarında gaz değişimi olmayan hacim (~150 mL). Anatomik ölü hacim + alveoler ölü hacim = fizyolojik ölü hacim.',
+    ),
+    clinical(
+      'Prematüre yenidoğanda solunum sıkıntısı, inlemeli solunum ve hışıltılı solunum varsa; göğüs grafisinde "camdan" (ground-glass) görünüm ve hava bronkogramları görülüyorsa NRDS düşünülmelidir. Sebep surfaktan eksikliğidir; tedavi ekzojen surfaktan replasyonu ve CPAP/ventilasyon desteğidir.',
+      'Neonatal Solunum Distresi',
+    ),
+    h('Alveoler Gaz Değişimi ve Difüzyon'),
+    p(
+      'Gazlar, alveoler hava ile pulmoner kılcal kan arasındaki bariyerden parsiyel basınç gradyanına göre pasif difüzyonla geçer (Fick\'in difüzyon yasası). Alveol duvarı ~0,2-0,5 µm kalınlığında olup surfaktan-pnömosit-kapiller endotelyum-bazal membran-kapiller hücre tabakalarından oluşur. Toplam solunum yüzeyi yaklaşık 70-100 m²\'dir.',
+    ),
+    li(
+      'Parsiyel basınçlar: Alveolde PO₂ ≈ 100 mmHg, PCO₂ ≈ 40 mmHg; venöz kanda PO₂ ≈ 40 mmHg, PCO₂ ≈ 45 mmHg.',
+      'Oksijen CO₂\'den 20 kat daha az çözündüğü için difüzyon bariyeri kalınlaştığında (fibrozis, ödem) ilk bozulan gaz oksijendir.',
+      'Difüzyon kapasitesi (DLCO): Hemoglobinle birleşen CO üzerinden ölçülür; emfizemde (yüzey azalır) düşer, pulmoner kanamada artar.',
+    ),
+    h('Oksijen-Hemoglobin Dissosiyasyon Eğrisi'),
+    p(
+      'Hemoglobin ile oksijenin birleşmesi S biçimli (sigmoidal) bir eğri çizer; bu eğri hemoglobin\'in oksijen yükleme ve bırakma kapasitesini belirler. Eğrinin sağa veya sola kayması, dokularda oksijen salınımının ne kadar kolaylaştığını gösterir.',
+    ),
+    table(
+      ['Sağa Kayma (O₂ bırakımı artar)', 'Sola Kayma (O₂ bağlanması kolaylaşır)'],
+      [
+        ['pH düşüklüğü (asidoz)', 'pH artışı (alkaloz)'],
+        ['PCO₂ artışı (Bohr etkisi)', 'PCO₂ düşüklüğü'],
+        ['Sıcaklık artışı (ateş, egzersiz)', 'Sıcaklık düşüklüğü (hipotermi)'],
+        ['2,3-BPG artışı (kronik hipoksi, anemi)', '2,3-BPG azalması'],
+        ['—', 'Karbonmonoksit zehirlenmesi (HbCO)'],
+        ['—', 'Fetal hemoglobin (HbF) — anneye göre daha yüksek afiniteli'],
+      ],
+      'Dissosiyasyon eğrisini etkileyen faktörler',
+    ),
+    spot(
+      'Karbonmonoksit (CO) zehirlenmesinde eğri sola kayar ve HbCO oluşur; hasta "kiraz kırmızısı" deri rengiyle gelir ve PO₂ ölçümü normal çıkabilir (çünkü paletik oksijen basınç ölçer). Gerçek oksijen içerik düşüktür — bu nedenle tedavi %100 O₂ veya hiperbarik oksijendir.',
+    ),
+    h('Ventilasyon/Perfüzyon (V/Q) İlişkisi'),
+    p(
+      'Sağlıklı akciğerde ortalama V/Q oranı yaklaşık 0,8\'dir (dakika ventilasyonu 4 L/dk, perfüzyon 5 L/dk). Akciğerin apeksinde ventilasyon fazladır (V/Q >1), tabanında perfüzyon üstündür (V/Q <1). V/Q uyumsuzluğu, hipokseminin en sık nedenidir ve genellikle hava yolu tıkanıklığı (atelektazi → V/Q = 0, şant) veya perfüzyon eksikliği (pulmoner emboli → V/Q = ∞, ölü alan) kaynaklıdır.',
+    ),
+    li(
+      'V/Q = 0 (şant): Alveol ventilasyonsuz ama perfüzyonlu — kan oksijenlenmeden geçer. Yüksek akımlı O₂ ile düzeltilemeyen hipokseminin klasik nedenidir (pnömoni, ARDS, atelektazi).',
+      'V/Q = ∞ (ölü alan): Alveol ventilasyonlu ama perfüzyonsuz — emfizem ve pulmoner embolide görülür.',
+      'Hipoksik pulmoner vazokonstriksiyon (Euler-Liljestrand refleksi): Düşük oksijenli bölgedeki pulmoner arterioller daralır, kan iyi havalandırılan bölgelere yönlendirilir.',
+    ),
+    h('Solunumun Kontrolü'),
+    p(
+      'Solunum ritmi, medulla oblongata\'daki solunum merkezlerince üretilir: dorsal solunum grubu (DRG, inspiratuar nöronlar) ve ventral solunum grubu (VRG, ekspiratuar aktivite). Pons düzeyindeki pnömotaksik merkez inspirasyonu kısaltarak solunum hızını düzenler.',
+    ),
+    li(
+      'Birincil kimyoreseptörler: Medulla oblongata\'daki merkezi reseptörler — H⁺ iyonuna (CSF\'de CO₂\'den oluşan karbonik asit) yanıt verir.',
+      'Periferik kimyoreseptörler: Karotis cisimciği (n. glossopharyngeus) ve aort cisimciği (n. vagus) — O₂ düşüklüğüne, CO₂/H⁺ artışına duyarlıdır. Acil hipoksik yanıtta ana rol oynarlar.',
+      'Hipoksi yanıtı (PaO₂ <60 mmHg) yalnızca periferik reseptörlerle sağlanır; kronik CO₂ tutulumunda (KOAH) merkezi reseptörler duyarsızlaşır ve solunum sürükleyicisi hipoksi olur — yüksek akımlı oksijenin tehlikesi budur.',
+    ),
+    spot(
+      'Kronik hiperkapnili (KOAH) bir hastaya kontrollü düşük akımlı oksijen verilir (SpO₂ %88-92 hedefi). Nedeni: solunum sürükleyicisi olan hipoksik uyarının ortadan kalkmasıyla solunum depresyonu ve CO₂ narkozu riski.',
+    ),
+    h('Klinik Ayrım: Restriktif vs Obstrüktif'),
+    table(
+      ['Parametre', 'Restriktif (fibrozis, obezite, skolyoz)', 'Obstrüktif (astım, KOAH)'],
+      [
+        ['FEV1/FVC', 'Normal (≥%70) veya artmış', 'Düşük (<%70)'],
+        ['TLC (toplam akciğer kapasitesi)', 'Azalmış', 'Artmış (özellikle emfizem)'],
+        ['FEV1', 'Oranla azalmış (kısıtla uyumlu)', 'Belirgin azalmış'],
+        ['Akım-hacim eğrisi', 'Proporsiyonel küçülme', 'Ekspiratuar "kol" çökmesi'],
+      ],
+      'Spirometrik ayrım',
+    ),
+    clinical(
+      'Ani başlayan plevritik göğüs ağrısı, dispne ve taşikardi ile gelen 55 yaşında postoperatif bir hastada; D-dimer yüksek, PaO₂ düşük ve PCO₂ düşük (hiperventilasyon) ise pulmoner emboli akla gelmelidir. Saptanamayan normokapni bile hastalığın erken evresinde normal olabilir; yüksek klinik şüphe ile anjiyografi/CTPA gerekir.',
+      'Pulmoner Emboli',
+    ),
+  ],
+};
+
+const ANEMIAS: LibraryResource = {
+  id: 'anemiler',
+  title: 'Anemiler: Mikrositer, Normositer ve Makrositer Yaklaşım',
+  subtitle: 'Demir eksikliği, talasemiler, hemolitik ve megaloblastik anemiler; periferik yayma ve laboratuvar algoritması',
+  term: 'Dönem 3',
+  committee: COMMITTEES[3],
+  course: 'Patoloji',
+  resourceType: 'Ders Notu',
+  author: 'HipokLab Akademik Kurul',
+  updatedAt: '2026-11-24',
+  minutes: 27,
+  blocks: [
+    h('Giriş: Anemiye Yaklaşım'),
+    p(
+      'Anemi, kandaki hemoglobin (Hb) konsantrasyonunun yaş ve cinsiyete göre normal değerlerin altına düşmesidir (erkeklerde <13.5 g/dL, kadınlarda <12 g/dL, gebelerde <11 g/dL). Anemi bir hastalık değil, altta yatan hastalığın belirtisidir. Klinikte en sık rastlanan hematolojik sorun olan aneminin değerlendirilmesinde yol haritası: ilk olarak MCV\'ye (ortalama korpüsküler hacim) göre mikrositer (<80 fL), normositer (80-100 fL) veya makrositer (>100 fL) olarak sınıflandırmaktır.',
+    ),
+    li(
+      'Genel bulgular: Yorgunluk, efor dispnesi, çarpıntı, solukluk, tinnitus; şiddetli anemide konjestif kalp yetmezliği.',
+      'Kompansatuar mekanizmalar: Kalp debisi artar, 2,3-BPG artışı eğriyi sağa kaydırır, eritropoietin (EPO) salınımı artar.',
+      'Öncelik: Akut kanama dışlanmalı; ardından demografik ipuçları (akdenizli hasta → talasemi; yaşlı vejetaryen → B12 eksikliği) değerlendirilir.',
+    ),
+    h('Mikrositer Anemiler (MCV <80 fL)'),
+    p(
+      'Mikrositer anemilerin en sık iki nedeni demir eksikliği anemisi (DEA) ve talasemidir. Demir eksikliğinde hemoglobin sentezi yetersizdir; talasemide ise globin zinciri sentezi bozuktur. Her ikisinde de MCV düşer, fakat laboratuvar profilleri farklıdır.',
+    ),
+    h('Demir Eksikliği Anemisi'),
+    li(
+      'Dünyada en sık anemi nedeni; kadınlarda menstrüel kayıp, gebelik; erkeklerde ve postmenopozal kadınlarda gastrointestinal kanama aranmalıdır.',
+      'Laboratuvar: Düşük ferritin (en duyarlı test), yüksek TIBC (total demir bağlama kapasitesi), düşük serum demiri, düşük transferrin saturasyonu (<%15).',
+      'Periferik yayma: Mikrositer hipokrom eritrositler, anizositoz (RDW artışı), çizgeli (pencere) hücreler, trombositoz.',
+      'Eriken bulgular: Ferritin akut faz reaktanı olduğundan inflamasyonda yalancı yüksek çıkabilir; bu durumda düşük serum demiri + yüksek TIBC yöneltir.',
+      'İleri evre: Plummer-Vinson sendromu (özofagus web + disfaji + demir eksikliği); koilonişi (kaşık tırnak).',
+    ),
+    clinical(
+      '38 yaşında, aşırı adet gören bir kadında halsizlik ve çarpıntı mevcut. Laboratuvarda Hb 9.8 g/dL, MCV 68 fL, ferritin 4 ng/mL (normal 20-200), TIBC yüksek, RDW yüksek. Periferik yaymada hipokrom mikrositer hücreler ve çizgili hücreler görülür. Tanı: Demir eksikliği anemisi; tedavi oral demir (elementer demir 150-200 mg/gün) ve altta yatan nedenin ortadan kaldırılmasıdır. Retikülosit yanıtı tedavinin 7-10. gününde yükselir.',
+      'Klasik DEA Sunumu',
+    ),
+    h('Talasemiler'),
+    p(
+      'Talasemiler, globin zinciri sentezinin genetik defekti sonucu ortaya çıkan hemoglobinopatilerdir. Alfa talasemide alfa globin geni silinir/kusurludur (16. kromozom); beta talasemide beta globin geni etkilenir (11. kromozom). Beta talasemi minör genellikle asemptomatiktir; beta talasemi majör (Cooley anemisi) ciddi, transfüzyon bağımlı bir hastalıktır.',
+    ),
+    table(
+      ['Özellik', 'Demir Eksikliği', 'Talasemi Minör'],
+      [
+        ['Ferritin', 'Düşük', 'Normal/yüksek'],
+        ['RDW', 'Yüksek', 'Normal'],
+        ['Periferik yayma', 'Anizositoz, çizgili hücre', 'Hedef hücre (target cell), bazofilik noktalanma'],
+        ['Hb elektroforezi', 'Normal', 'Beta talasemide HbA2 ↑ (%3.5-7), HbF ↑'],
+        ['Aile öyküsü', 'Genellikle yok', 'Akdeniz kökenli ailelerde sık'],
+      ],
+      'Demir eksikliği ile talasemi minörün ayrımı',
+    ),
+    spot(
+      'HbA2 (α₂δ₂) artışı beta talasemi minörün imzasıdır. Elektroforezde HbA2 >%3.5 saptanması, genellikle demir eksikliği dışlandıktan sonra tanıyı doğrular. Alfa talasemide ise HbBart\'s (γ₄) yenidoğanda, HbH (β₄) yetişkinde görülebilir.',
+    ),
+    h('Normositer Anemiler (MCV 80-100 fL)'),
+    li(
+      'Akut kanama: İlk 24 saatte MCV normal kalabilir (sıvı kompanzasyonu); retikülosit artışı 3-5. günde başlar.',
+      'Kronik hastalık anemisi (anemia of chronic disease): En sık ikinci anemi nedeni; demir tutulumu (hepsidin artışı), ferritin normal/yüksek, TIBC düşük, transferrin saturasyonu düşük-normal.',
+      'Kemik iliği yetmezliği: Aplastik anemi (panstopeni), miyelodisplastik sendrom.',
+      'Böbrek yetmezliği: EPO eksikliği; tedavi rekombinant EPO.',
+      'Hemolitik anemiler: Retikülositoz, LDH artışı, indirekt bilirubin artışı, düşük haptoglobin.',
+    ),
+    h('Hemolitik Anemiler'),
+    p(
+      'Hemolitik anemiler, eritrosit ömrünün kısalması (normal 120 gün) ile karakterizedir. İçsel (hücre içi) ve dışsal (ekstraselüler) nedenler olarak ayrılır. İmmün hemolitik anemilerde direkt Coombs testi pozitiftir.',
+    ),
+    li(
+      'Membran defekti: Herediter sferositoz (ankirin/spektrin eksikliği; osmotik kırılganlık ↑, ektimaz, sarılık; tedavi splenektomi) ve herediter eliptositoz.',
+      'Enzim defekti: G6PD eksikliği (oksidatif stresle hemoliz; favizm, primaquine, kefalosporinler; kan yaymasında bite (ısırık) hücreler ve Heinz cisimcikleri).',
+      'Paroksismal nokturnal hemoglobinüri (PNH): CD55/CD59 eksikliği (PIG-A gen mutasyonu); kompleman aracılı hemoliz, hemoglobinüri, tromboz riski.',
+      'Dışsal nedenler: Mikroanjiyopatik hemolitik anemiler (TTP, HUS, HELLP) — kan yaymasında şistositler (kama hücreleri); mekanik kapak hemolizi, ısı/hipotonik hasar.',
+      'İmmün: Sıcak antikor (IgG, tüm vücutta, kronik lenfositik lösemi ile birliktelik) ve soğuk antikor (IgM, akral, Mycoplasma/EBV sonrası).',
+    ),
+    spot(
+      'Hemolitik aneminin dört imzası: LDH artışı, indirekt (konjuge olmamış) bilirubin artışı, retikülositoz ve düşük serum haptoglobin. Haptoglobin hemolizin en duyarlı belirteçlerinden biridir; konjestif kalp yetmezliği ve karaciğer hastalığında da düşebildiği unutulmamalıdır.',
+    ),
+    h('Makrositer Anemiler (MCV >100 fL)'),
+    p(
+      'Makrositer anemiler iki ana başlıkta toplanır: megaloblastik (DNA sentez defekti) ve non-megaloblastik (alkol, karaciğer hastalığı, hipotiroidi, retikülositoz). Megaloblastik anemide eritrosit prekürsörlerinde nükleer olgunlaşma (DNA) sitoplazmik olgunlaşmadan (RNA/protein) geride kalır — nükleer-sitoplazmik uyumsuzluk.',
+    ),
+    li(
+      'B12 (kobalamin) eksikliği: Et ve süt ürünlerinde bulunur; terminal ileumda emilir (intrinsik faktör-B12 kompleksi ile). Eksikliğinde yalnızca anemi değil, subakut kombine dejenerasyon (spinal kolon demiyelinizasyonu: ataksi, vibrasyon/propriosepsiyon kaybı), glossit ve periferik nöropati görülür.',
+      'Folat eksikliği: Yeşil yapraklı sebzelerde bulunur; proksimal jejunumda emilir. DNA sentezi için tetrahidrofolat (THF) gerekir; folat eksikliğinde dUMP → dTMP dönüşümü (timidilat sentaz) durur.',
+      'B12 ve folat eksikliklerinin ortak bulgusu: Makrositoz, hipersegmente nötrofil (≥5 lob), megaloblastik kemik iliği, düşük haptoglobin değil — düşük folat/B12, yüksek LDH, yüksek homosistein.',
+      'B12 eksikliğinde metilmalonik asit de yükselir (folatta yükselmez) — en güvenilir ayırıcı test.',
+    ),
+    clinical(
+      '65 yaşındaki vejetaryen bir hastada yorgunluk, bacaklarda uyuşma ve yürürde dengesizlik vardır. Hb 9 g/dL, MCV 112 fL, periferik yaymada hipersegmente nötrofil ve oval makrositler mevcut. Serum B12 düzeyi düşük, metilmalonik asit yüksek. Tanı: B12 eksikliği anemisi + subakut kombine dejenerasyon. Tedavi: IM hidroksikobalamin; folat verilmesi nörolojik hasarı maskeleyebildiğinden kaçınılır.',
+      'B12 Eksikliği',
+    ),
+    spot(
+      'Unutulmaması gereken klasik tuzak: B12 eksikliğine folat verilirse anemi düzelir fakat nörolojik hasar ilerler (folat, metilasyonu baskılar). Bu yüzden makrositer anemide önce B12 düzeyi ölçülür, sonra folat denenir.',
+    ),
+  ],
+};
+
+const LIVER: LibraryResource = {
+  id: 'karaciger-histoloji',
+  title: 'Karaciğer Histolojisi ve Bilirubin Metabolizması',
+  subtitle: 'Lobül yapısı, portosistemik dolaşım, sarılık tipleri ve karaciğer fonksiyon testlerinin yorumu',
+  term: 'Dönem 3',
+  committee: COMMITTEES[3],
+  course: 'Histoloji',
+  resourceType: 'Ders Notu',
+  author: 'HipokLab Akademik Kurul',
+  updatedAt: '2026-11-24',
+  minutes: 25,
+  blocks: [
+    h('Giriş: Karaciğerin Anatomik ve İşlevsel Birimi'),
+    p(
+      'Karaciğer, vücuttaki en büyük salgı bezidir ve metabolizmanın merkezi olarak görev yapar: besinlerin işlenmesi, plazma proteinlerinin sentezi, detoksifikasyon, safra üretimi ve depolama fonksiyonlarını üstlenir. Histolojik işlevsel birimi hepatik lobüldür. Her lobülün merkezinde santral ven, çevresinde ise portal triad (portal alan) bulunur.',
+    ),
+    li(
+      'Portal triad üç yapı içerir: portal ven dalı (%75 kan — besin yönünden zengin), hepatik arter dalı (%25 kan — oksijen) ve safra kanalı (bile ductule).',
+      'Hepatositler santral vene doğru radial dizilir; sinusoidler endotelyum ile hepatositler arasındadır ve Disse boşluğu (space of Disse) ile ayrılır.',
+      'Santral ven → sublobüler ven → hepatik ven → inferior vena cava; portal ven ile hepatik arter kanı sinusoidlerde karışır.',
+      'Kupffer hücreleri: Sinusoidlerde yerleşik makrofajlar (RES); bilirubin yıkımında ve partikül temizliğinde rol oynar.',
+      'İto hücreleri (stellate): Disse boşluğunda; A vitamini depolar, karaciğer fibrozunda kolajen üretir.',
+    ),
+    h('Karaciğerin Metabolik İşlevleri'),
+    li(
+      'Plazma proteinleri: Albumin (%60), fibrinojen, protrombin, transferrin, kompleman — hepatit ve sirozda sentez azalır (protrombin zamanı uzar, ödem/askit).',
+      'Detoksifikasyon: Faz I (sitokrom P450, oksidasyon), Faz II (konjugasyon — glukuronat, sülfat, glutation). Alkol metabolizması alkol dehidrogenaz ve MEOS ile yapılır.',
+      'Safra üretimi: Günde 500-1000 mL; safra tuzları, bilirubin diglukuronid, kolesterol ve fosfolipidlerden oluşur. Safra tuzları yağ emilimi için kritiktir (misel oluşumu).',
+      'Depolama: Glikojen, A vitamini, D vitamini, B12, demir (ferritin).',
+    ),
+    h('Bilirubin Metabolizması'),
+    p(
+      'Bilirubin, hemoglobin\'in heme kısmının yıkım ürünüdür. Eritrositler ortalama 120 gün yaşar; makrofajlar (retiküloendotelyal sistem) heme\'yi biliverdine, biliverdin de bilirubine dönüştürür. Bu ilk bilirubin indirekt (konjuge olmamış, suda çözünmeyen) bilirubindir; albümine bağlanarak karaciğere taşınır. Hepatositlerde UDP-glukuronil transferaz (UGT) enzimiyle glukuronidasyona uğrayarak suda çözünen direkt (konjuge) bilirubine dönüşür ve safra ile atılır. Bağırsakta bakteriler onu ürobilinogène çevirir; ürobilinogen kısmen yeniden emilir (enterohepatik dolaşım), kısmen ürobilin olarak idrarla atılır (idrarın sarı renginin kaynağı).',
+    ),
+    table(
+      ['Sarılık Tipi', 'Neden', 'İndirekt B.', 'Direkt B.', 'İdrar Ürobilin', 'Dışkı Rengi'],
+      [
+        ['Hemolitik (pre-hepatik)', 'Hemoliz artışı', 'Yüksek', 'Normal', 'Artmış (koyu)', 'Normal/açık'],
+        ['Hepatoselüler (hepatik)', 'Hepatit, siroz', 'Yüksek', 'Yüksek', 'Değişken', 'Açık (akolik) olabilir'],
+        ['Obstrüktif (post-hepatik)', 'Safra taşı, tümör', 'Normal/ hafif', 'Çok yüksek', 'Yok (koyu idrar)', 'Açık (acholic/clay-colored)'],
+      ],
+      'Sarılık tiplerinin laboratuvar karşılaştırması',
+    ),
+    spot(
+      'Gilbert sendromu: UGT enzim aktivitesinde hafif azalma (~%30) olan, toplumda en sık görülen kalıtsal hiperbilirubinemidir (%5-10). Açlık, stres veya enfeksiyonla indirekt bilirubin yükselir (%2-5 mg/dL); genellikle asemptomatiktir, tedavi gerektirmez. Kolestatik sarılıkla karıştırılmamalıdır.',
+    ),
+    h('Kalıtsal Hiperbilirubinemiler'),
+    table(
+      ['Sendrom', 'Defekt', 'Bilirubin Tipi', 'Prognoz'],
+      [
+        ['Gilbert', 'UGT aktivite azalması', 'İndirekt', 'İyi huylu, tedavi yok'],
+        ['Crigler-Najjar Tip I', 'UGT tam yokluk', 'İndirekt (çok yüksek)', 'Kernikterus riski; fototerapi/karaciğer nakli'],
+        ['Crigler-Najjar Tip II', 'UGT kısmi eksiklik', 'İndirekt', 'Fenobarbital ile yanıt'],
+        ['Dubin-Johnson', 'Organik anyon taşıyıcı (ABCC2/MRP2) defekti', 'Direkt', 'İyi huylu; siyah karaciğer (pigment birikimi)'],
+        ['Rotor', 'Hepatik geri alım defekti', 'Direkt', 'İyi huylu'],
+      ],
+      'Kalıtsal bilirubin metabolizması bozuklukları',
+    ),
+    clinical(
+      'Yeni doğan bebek 24 saat içinde sarılık olursa patolojiktir (fizyolojik sarılık 2-3. günde başlar). Fizyolojik sarılık: indirekt bilirubin yükselir, 1-2 hafta içinde kendiliğinden düzelir. Patolojik nedenlerde: erken başlangıç, 24 saatte artış hızı >5 mg/dL/gün ve direkt bilirubin yükselmesi enfeksiyon (TORCH), kan uyuşmazlığı (Rh/ABO) veya doğuştan metabolik hastalıklara işaret eder.',
+      'Yenidoğan Sarılığı',
+    ),
+    h('Karaciğer Fonksiyon Testlerinin Yorumu'),
+    li(
+      'ALT (SGPT) ve AST (SGOT): Hepatosit hasarının belirteçleri. ALT daha karaciğere özgüdür; AST kas, kalp ve eritrositlerde de bulunur. Alkolik hepatitte AST/ALT oranı >2 tipiktir (aspartat aminotransferaz mitokondriyal formu).',
+      'ALP (alkalen fosfaz) ve GGT: Kolestaz belirteçleri. ALP artışı kemik hastalıklarında da olur; GGT artışıyla birlikteliği hepatobiliyer kaynaklı olduğunu doğrular.',
+      'Bilirubin: Direkt/indirekt ayrımı sarılık tipini gösterir (yukarıdaki tablo).',
+      'Albumin ve protrombin zamanı (PT/INR): Karaciğerin sentez kapasitesini yansıtır; kronik hastalıktaki prognostik göstergelerdir.',
+    ),
+    spot(
+      'AST/ALT oranı >2 ve GGT artışı alkolik karaciğer hastalığının klasik laboratuvar imzasıdır. Karaciğerde AST, sitozolik ve mitokondriyal iki formda bulunur; alkol mitokondriyal hasarı artırdığı için AST\'de belirgin artış olur.',
+    ),
+  ],
+};
+
+const MUSCULOSKELETAL: LibraryResource = {
+  id: 'kas-eklem',
+  title: 'Kas ve Eklemler: Klinik Anatomi Temelleri',
+  subtitle: 'Kas tipleri, kaydırma teorisi, lif tipleri, sinoviyal eklemler, diz ve omuzun klinik anatomisi',
+  term: 'Dönem 1',
+  committee: COMMITTEES[0],
+  course: 'Anatomi',
+  resourceType: 'Ders Notu',
+  author: 'HipokLab Akademik Kurul',
+  updatedAt: '2026-11-24',
+  minutes: 26,
+  blocks: [
+    h('Giriş: Hareket Sisteminin Üç Temel Bileşeni'),
+    p(
+      'Hareket sistemi; kaslar (aktif hareket), kemikler (pasif destek ve kaldıraç) ve eklemler (hareket noktaları) ile birlikte çalışır. Kas-iskelet sistemi travmalarının acil servis başvurularının önemli bir bölümünü oluşturması, bu sistemin klinik anatomisini günlük pratiğin merkezine yerleştirir.',
+    ),
+    h('Kas Tipleri'),
+    table(
+      ['Özellik', 'İskelet Kası', 'Kardiyak Kas', 'Düz Kas'],
+      [
+        ['Kontrol', 'İstemli (somatik sinir)', 'Otonom (aralıklı otomasi)', 'İstem dışı (visseral)'],
+        ['Striyasyon', 'Var', 'Var', 'Yok'],
+        ['Çekirdek', 'Çok çekirdekli, periferik', '1-2 çekirdek, merkezi', 'Tek çekirdekli, merkezi'],
+        ['Kasılma', 'Hızlı, yorulur', 'Orta, yorulmaz', 'Yavaş, uzun süreli'],
+        ['Kopuksal Disk', 'Yok', 'Var (interkale disk)', 'Yok'],
+        ['Regenerasyon', 'Çok sınırlı (satellit hücre)', 'Çok sınırlı', 'İyi'],
+      ],
+      'Üç kas tipinin karşılaştırılması',
+    ),
+    h('Kas Kasılmasının Mekanizması: Kaydırma Teorisi'),
+    p(
+      'İskelet kasının kasılması, aktin ve miyozin filamentlerinin birbirinin arasından kaymasıyla gerçekleşir (Huxley\'in kaydırma teorisi). Motor sinir aksonundan asetilkolin salınır; nöromusküler kavşakta nikotinik reseptörlere bağlanarak son plak potansiyeli oluşturur. Bu potansiyel eşiği aşınca sarkolemmada aksiyon potansiyeli yayılır; T-tübülleri üzerinden sarkoplazmik retikulumdan Ca²⁺ salınır (eksitasyon-kasılma eşleşmesi).',
+    ),
+    li(
+      'Ca²⁺, troponin C\'ye bağlanır; tropomiyozin aktin üzerindeki miyozin bağlanma bölgelerini açar.',
+      'Miyozin ATPaz aktivitesi ile aktin üzerinde başını çevirir (cross-bridge döngüsü) — güç şeridi (power stroke).',
+      'ATP yokluğunda rigor mortis gelişir (miyozin aktinden ayrılamaz).',
+      'Kaslarda enerji kaynakları: Kreatin fosfat (ilk saniyeler), glikoliz (hızlı), oksidatif fosforilasyon (dayanıklılık).',
+    ),
+    h('Kas Lif Tipleri'),
+    table(
+      ['Tip I (Yavaş, Oksidatif)', 'Tip IIa (Hızlı, Oksidatif-Glikolitik)', 'Tip IIb/IIx (Hızlı, Glikolitik)'],
+      [
+        ['Kırmızı renk, miyoglobin yüksek', 'Orta renk', 'Beyaz renk, miyoglobin düşük'],
+        ['Yavaş kasılma, yorulmaz', 'Orta hız, orta dayanıklılık', 'Hızlı kasılma, çabuk yorulur'],
+        ['Aerobik metabolizma', 'Her ikisi', 'Anaerobik glikoliz'],
+        ['Postüral kaslar (soleus)', 'Ekstremite kasları', 'Güç gerektiren hareketler (sprinter)'],
+      ],
+      'Kas lif tiplerinin özellikleri',
+    ),
+    clinical(
+      'Bir maraton koşucusunda tip I lif oranı yüksekken, sprinterlerde tip II lifler baskındır. Miyoglobinüri ve rabdomyoliz (kreatin kinaz artışı, böbrek yetmezliği riski) gibi durumlar, kas liflerinin akut hasarını gösterir — uzun süreli immobilizasyon, konvülsiyon veya statin kullanımıyla tetiklenebilir.',
+      'Spor Fizyolojisi ve Rabdomioliz',
+    ),
+    h('Eklem Sınıflandırması'),
+    p(
+      'Eklem (articulatio), iki veya daha fazla kemiğin birleştiği yapıdır. Fibroz, kartilajinöz ve sinoviyal eklemler olmak üzere üç ana tip bulunur. Sinoviyal eklemler, en çok hareket eden ve klinik olarak en önemli eklemlerdir: eklem kapsülü, sinovyal membran, sinovyal sıvı ve eklem kıkırdağından oluşur.',
+    ),
+    li(
+      'Fibroz eklemler: Bağ dokusu (sütürler — kafada; sindesmoz — distal tibiofibular).',
+      'Kartilajinöz eklemler: Kıkırdak birleşim (simfiz pubis — hyalin; intervertebral diskler — fibrokartilaj).',
+      'Sinoviyal eklemler: Hareket açıklığına göre — menteşe (dirsek), küre (omuz), eyer (skapuloklaviküler), kondiloid (el bileği), düz (sakroiliak).',
+    ),
+    h('Omuz Kompleksi ve Rotator Manşet'),
+    p(
+      'Glenohumeral eklem (omuz), vücudun en hareketli ama en kararsız eklemidir. Glenoid labrum (derinliği artıran fibrokartilaj halka) ve rotator manşet kasları stabiliteyi sağlar. Rotator manşet dört kastan oluşur ve glenohumeral eklemin "fonksiyonel kapsülünü" oluşturur.',
+    ),
+    li(
+      'Rotator manşet kasları: Supraspinatus (abduksiyonun ilk 15°\'si), infraspinatus (dış rotasyon), teres minor (dış rotasyon), subskapularis (iç rotasyon) — akronim: "SITS".',
+      'Rotator manşet yırtığı: En sık supraspinatus tendonunda; abduksiyonda ağrı, gece ağrısı; "düşük kol" (drop arm) testi pozitif.',
+      'Bursitler: Subakromiyal bursa inflamasyonu abduksiyonda 60-120° ağrılı yay oluşturur (ağrılı yay / painful arc).',
+      'Aksiller sinir yaralanması (humerus boyun kırığı, koltuk altı travması): Deltoid kasında güçsüzlük, omuzda duyu kaybı.',
+    ),
+    h('Diz Eklemi'),
+    p(
+      'Diz, vücudun en büyük sinoviyal eklemidir ve femur, tibia ve patella arasındaki yük transferini sağlar. Medial ve lateral menisküsler (fibrokartilaj) yük dağılımı ve şok emilimi yapar; çapraz bağlar anterior-posterior stabiliteyi, kolateral bağlar medial-lateral stabiliteyi sağlar.',
+    ),
+    li(
+      'ACL (ön çapraz bağ): Tibia\'nın femur üzerinde anterior translokasyonunu önler. Futbol/basketbol gibi ani duruş-dönme hareketlerinde yırtılır; "drawer testi" ve Lachman testi pozitiftir; popliteal fossa\'da akut hemartroz (4 saat içinde şişme).',
+      'PCL (arka çapraz bağ): Posterior stabilite; "geri drawer testi" pozitiftir; daha nadirdir (dashboard yaralanması).',
+      'Menisküs yırtığı: "Kilitlenme" (locking), eklem hattında ağrı, medialde daha sık (femoral kondil daha büyük).',
+      'Medial kolateral bağ (MCL): Futbolda dıştan darbe ile yırtılır; valgus stres testi ağrılı.',
+    ),
+    clinical(
+      'Basketbolda ani yön değiştirirken dizde "pop" sesi duyulur, diz hızla şişer (hemartroz) ve hasta dizini tam açamaz. Muayenede Lachman testi pozitiftir. Bu tablo ön çapraz bağ (ACL) yırtığıdır; genellikle artroskopik rekonstrüksiyon gerekir. Menisküs yırtığı ile birlikteliği (%75) sık görülür.',
+      'Spor Yaralanması',
+    ),
+    spot(
+      'Omuz çıkıklarının %95\'i anterior çıkıktır (kolum abduksiyon + dış rotasyon pozisyonunda düşme). Aksiller sinir ve sirkumfleks humeral arter hasarı en sık eşlik eden yaralanmalardır; redüksiyon sonrası nörovasküler muayene zorunludur.',
+    ),
+  ],
+};
+
+const VITAMINS_ENZYMES: LibraryResource = {
+  id: 'vitamin-enzim',
+  title: 'Vitaminler, Mineraller ve Enzimler',
+  subtitle: 'Suda ve yağda çözünen vitaminler, mineral eksiklikleri, enzim kinetiği ve inhibitör tipleri',
+  term: 'Dönem 1',
+  committee: COMMITTEES[0],
+  course: 'Biyokimya',
+  resourceType: 'Ders Notu',
+  author: 'HipokLab Akademik Kurul',
+  updatedAt: '2026-11-24',
+  minutes: 28,
+  blocks: [
+    h('Giriş: Vitaminler ve Koenzimler'),
+    p(
+      'Vitaminler, vücutta yeterli miktarda sentezlenemeyen (veya sentezlenemeyen) ve mikrogram-miligram düzeylerinde gereken organik bileşiklerdir. Çoğu vitamin, metabolik reaksiyonlarda katalizör olarak görev yapan koenzimlerin yapısına katılır. Eksiklikleri belirli klinik tablolarla, fazlalıkları ise toksisiteyle kendini gösterir.',
+    ),
+    h('Suda Çözünen Vitaminler (B Kompleksi ve C)'),
+    table(
+      ['Vitamin', 'Koenzim Formu / Görev', 'Eksiklik Tablosu', 'Zengin Kaynaklar'],
+      [
+        ['B1 (Tiamin)', 'TPP — piruvat dehidrogenaz, transketolaz', 'Beriberi (ıslak/kuru), Wernicke-Korsakoff', 'Tahıl kabukları, domuz eti, maya'],
+        ['B2 (Riboflavin)', 'FAD/FMN — oksidoredüktazlar', 'Ariboflavinozis (angular stomatitis, korneal vaskülarizasyon)', 'Süt, yumurta, et'],
+        ['B3 (Niasin)', 'NAD⁺/NADP⁺ — redoks', 'Pelagra (3 D: dermatit, diyare, demans)', 'Et, balık, yer fıstığı'],
+        ['B5 (Pantotenik asit)', 'Koenzim A — asil transferleri', 'Nadir (yanma ayak sendromu)', 'Her yerde yaygın'],
+        ['B6 (Piridoksin)', 'PLP — transaminazlar, ALA sentaz', 'Mikrositer anemi, nöropati, dermatit', 'Et, muz, patates'],
+        ['B7 (Biyotin)', 'Karboksilaz kofaktörü', 'Yumurta akı fazlalığında (avidin bağlar), dermatit, alopesi', 'Yumurta sarısı, karaciğer'],
+        ['B9 (Folat)', 'THF — tek karbon transferleri', 'Megaloblastik anemi, nöral tüp defekti', 'Yeşil yapraklı sebzeler'],
+        ['B12 (Kobalamin)', 'Metionin sentaz, metilmalonil-CoA mutaz', 'Pernisiyöz anemi, subakut kombine dejenerasyon', 'Et, süt, yumurta'],
+        ['C (Askorbik asit)', 'Prolil/lizil hidroksilaz (kolajen sentezi)', 'Skorbüt (diş eti kanaması, zayıf yara iyileşmesi)', 'Narenciye, kivi, biber'],
+      ],
+      'Suda çözünen vitaminlerin özeti',
+    ),
+    spot(
+      'Tiamin (B1) eksikliği: Alkolizmle birlikteliği klasiktir. "Islak beriberi" kalp yetmezliği (yüksek çıkışlı), "kuru beriberi" periferik nöropati yapar. Wernicke ensefalopatisi (konfüzyon, oftalmopleji, ataksi) acil IV tiamin gerektirir; Korsakoff psikozu (anterograd amnezi) kalıcı olabilir.',
+    ),
+    h('Yağda Çözünen Vitaminler (A, D, E, K)'),
+    table(
+      ['Vitamin', 'Görev', 'Eksiklik', 'Fazlalık (Toksisite)'],
+      [
+        ['A (Retinol)', 'Görme (rodopsin), epitel diferansiyasyonu', 'Gece körlüğü, keratomalasi, xeroftalmi', 'İntrakraniyal hipertansiyon, hepatotoksisite, teratojenik'],
+        ['D (Kolekalsiferol)', 'Kalsiyum-fosfat homeostaz (kalsitriol)', 'Raşitizm (çocuk), osteomalazi (yetişkin)', 'Hiperkalsemi, kalsiyum taşı, böbrek hasarı'],
+        ['E (Tokoferol)', 'Antioksidan (lipid peroksidasyonu)', 'Hemolitik anemi, nöropati (malabsorbsiyon)', 'Antikoagülan etkiyi artırır'],
+        ['K (Filokinon)', 'Koagülasyon faktörleri (II, VII, IX, X, C, S)', 'Kanama diatezi, PT uzaması', 'Yenidoğanda hemoliz (doz aşımı)'],
+      ],
+      'Yağda çözünen vitaminlerin özeti',
+    ),
+    clinical(
+      'Kistik fibroz veya çölyak hastalığı olan bir hastada malabsorbsiyon nedeniyle A, D, E, K vitaminleri emilemez. Gece körlüğü (A eksikliği), osteomalazi (D), hemolitik anemi (E) ve protrombin zamanı uzaması (K) birlikteliği bu durumu düşündürür. Tedavi yerine koyma + yağ emilimini kolaylaştıran enzim replasyonu (pankreatik lipaz) içerir.',
+      'Malabsorbsiyon ve Vitaminler',
+    ),
+    h('Mineraller'),
+    li(
+      'Demir: Hemoglobin ve miyoglobin yapısında; Hb\'de Fe²⁺ (ferro) oksijeni taşır. Eksiklik → mikrositer anemi. Aşırı yük (hemokromatoz): "Bronz diyabet" + siroz + kardiyomiyopi (C282Y mutasyonu, HFE geni).',
+      'İyot: T3/T4 sentezi için gerekli. Eksiklik → guatr (kretinizm, fetal nörogelişimsel gecikme). İyotlu tuz programları guatr prevalansını düşürmüştür.',
+      'Çinko: 300\'den fazla enzimin kofaktörü (alkalin fosfaz, karboksipeptidazlar). Eksiklik: dermatit, alopesi, ishal, hipogonadizm, tat-koku kaybı.',
+      'Kalsiyum ve fosfor: Kemik mineralizasyonu; D vitamini regülasyonunda (parathormon, kalsitonin). Düşük Ca²⁺ → tetani, parestezi, Trousseau ve Chvostek bulguları.',
+      'Selenyum: Glutatyon peroksidazın kofaktörü (antioksidan). Eksiklik: Keshan hastalığı (kardiyomiyopi), Kasyan-Beck (osteoartropati).',
+    ),
+    spot(
+      'Niasin (B3) eksikliği pelagraya yol açar: dermatit (güneşe duyarlı), diyare ve demans üçlüsü — "3D". Klasik risk grubu mısırla beslenen popülasyonlardır (mısırdaki niacin biyoyararlanımı düşüktür; triptofan eksikliği de eşlik eder).',
+    ),
+    h('Enzim Kinetiği'),
+    p(
+      'Enzimler, reaksiyonların aktivasyon enerjisini düşürerek hızını artıran biyokatalizörlerdir. Michaelis-Menten kinetiği, substrat konsantrasyonu ile reaksiyon hızı arasındaki ilişkiyi tanımlar: Km (Michaelis sabiti) enzimin substrata afinitesini gösterir (düşük Km = yüksek afinite); Vmax ise tüm enzimlerin doygunlukta ulaştığı maksimum hızdır.',
+    ),
+    li(
+      'Lineweaver-Burk grafiği: 1/V vs 1/[S] doğrusal bir ilişki verir; y-eksen kesişimi 1/Vmax, x-eksen kesişimi −1/Km.',
+      'Katalitik verimlilik (kcat/Km): "Mükemmel enzim"ler (tripsin, karboksipeptidaz) difüzyon sınırında çalışır.',
+      'Allosterik enzimler: Sigmoidal kinetik; düzenleyici bölgelere bağlanan efektörler (ör. ATP inhibisyonu, AMP aktivasyonu — fosfofruktokinaz).',
+      'Kovalent modifikasyon: Fosforilasyon/defosforilasyon (glikojen fosforilaz), zimogen aktivasyonu (tripsinojen → tripsin).',
+    ),
+    h('Enzim İnhibitörleri'),
+    table(
+      ['Tip', 'Etki', 'Vmax', 'Km', 'Örnek'],
+      [
+        ['Kompetitif', 'Substratla aktif bölge için yarışır', 'Değişmez', 'Artar', 'Malonat (süksinat dehidrogenaz), metotreksat (dihidrofolat redüktaz)'],
+        ['Non-kompetitif', 'Allosterik bölgeye bağlanır, katalizi durdurur', 'Azalır', 'Değişmez', 'Kurşun, ağır metaller (sülfhidril grupları)'],
+        ['Unkompetitif (irreversible)', 'Enzime kovalent bağlanır, kalıcı inhibisyon', 'Azalır', 'Azalır', 'Aspirin (siklooksijenaz), organik fosfatlar (asetilkolin esteraz)'],
+      ],
+      'Enzim inhibitör tipleri ve kinetik etkileri',
+    ),
+    clinical(
+      'Organofosfat zehirlenmesinde (böcek ilaçları) asetilkolin esteraz geri dönüşümsüz inhibe olur: miyozis, hipersalivasyon, bradikardi, kas fascikülasyonları ve solunum depresyonu görülür. Antidot pralidoksim (regenerasyon) ve atropindir (muskarinik etkileri bloke eder).',
+      'Organofosfat Zehirlenmesi',
+    ),
+    spot(
+      'Kompetitif inhibitörde Km artar (substrata afinite düşer) ancak Vmax değişmez; non-kompetitif inhibitörde Vmax düşer ancak Km değişmez. Bu iki cümle, enzim kinetiği sorularının neredeyse tamamını çözer.',
+    ),
+  ],
+};
+
 /* ---------------------------------------------------------------------------
    Kütüphane Koleksiyonu
 --------------------------------------------------------------------------- */
@@ -1214,6 +1830,12 @@ export const LIBRARY_RESOURCES: LibraryResource[] = [
   INFLAMMATION_REPAIR,
   EPITHELIUM_LAB,
   ENDOCRINE_SPOT,
+  DIABETES,
+  RESPIRATORY,
+  ANEMIAS,
+  LIVER,
+  MUSCULOSKELETAL,
+  VITAMINS_ENZYMES,
 ];
 
 export function getAllResources(custom: LibraryResource[]): LibraryResource[] {

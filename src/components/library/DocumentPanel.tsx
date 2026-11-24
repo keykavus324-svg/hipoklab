@@ -54,7 +54,7 @@ export function DocumentPanel({
 
   // Kaynak değişince en üste dön
   useEffect(() => {
-    scrollRef.current?.scrollTo({ top: 0 });
+    scrollRef.current?.scrollTo?.({ top: 0 });
     setActiveHeading(null);
   }, [resource.id]);
 
@@ -62,7 +62,7 @@ export function DocumentPanel({
     const container = scrollRef.current;
     const el = container?.querySelector<HTMLElement>(`[data-heading="${id}"]`);
     if (container && el) {
-      container.scrollTo({ top: el.offsetTop - 24, behavior: 'smooth' });
+      container.scrollTo?.({ top: el.offsetTop - 24, behavior: 'smooth' });
     }
   };
 

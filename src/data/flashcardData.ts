@@ -463,6 +463,230 @@ const PATHOLOGY_CARDS: Flashcard[] = [
 ];
 
 /* ---------------------------------------------------------------------------
+   Genişletme kartları — yeni konu anlatımlarıyla birlikte eklenen
+   elle hazırlanmış yüksek verimli kartlar
+--------------------------------------------------------------------------- */
+
+const EXPANSION_CARDS: Flashcard[] = [
+  // Diabetes Mellitus
+  {
+    id: 'dx-1',
+    deckId: 'deck-biyokimya',
+    front: 'HbA1c neyi yansıtır, normal değeri nedir?',
+    back: 'Son 2-3 aylık ortalama glisemiyi yansıtır (eritrosit ömrü ~120 gün). Normal <%5.7; diyabet tanısı ≥%6.5.',
+    tag: 'Diyabet',
+  },
+  {
+    id: 'dx-2',
+    deckId: 'deck-biyokimya',
+    front: 'Metforminin mekanizması ve en tehlikeli yan etkisi?',
+    back: 'Karaciğerde glukoneogenezini baskılar (AMPK aktivasyonu). En tehlikeli yan etkisi laktik asidozdur; GFR <30\'da kontrendikedir.',
+    tag: 'Farmakoloji',
+  },
+  {
+    id: 'dx-3',
+    deckId: 'deck-patoloji',
+    front: 'Diyabetik ketoasidozun (DKA) triadı nedir?',
+    back: 'Hiperglisemi (>250 mg/dL), ketonemi/ketonüri ve yüksek anyon açıklığı metabolik asidoz (pH <7.3). Tip 1\'de mutlak insülin eksikliğinin sonucudur.',
+    tag: 'Acil',
+  },
+  {
+    id: 'dx-4',
+    deckId: 'deck-biyokimya',
+    front: 'Hipergliseminin dört toksik yolağı?',
+    back: 'Poliol (sorbitol) yolağı, protein kinaz C aktivasyonu, heksozamin yolağı ve ileri glikasyon ürünleri (AGE) — hepsi ROS artışında birleşir.',
+    tag: 'Patogenez',
+  },
+  {
+    id: 'dx-5',
+    deckId: 'deck-biyokimya',
+    front: 'Tip 1 ve Tip 2 diyabette C-peptid düzeyleri nasıl ayrılır?',
+    back: 'Tip 1\'de beta hücre yıkımı nedeniyle C-peptid düşük/ölçülemez; Tip 2\'nin erken evresinde hiperinsülinemiye bağlı normal/yüksektir.',
+    tag: 'Tanı',
+  },
+  // Solunum
+  {
+    id: 'rs-1',
+    deckId: 'deck-fizyoloji',
+    front: 'Oksijen-hemoglobin eğrisini sağa kaydıran faktörler?',
+    back: 'Asidoz (pH düşüklüğü), hiperkapni (PCO₂ artışı), ateş, 2,3-BPG artışı — dokuya O₂ bırakımı kolaylaşır (Bohr etkisi).',
+    tag: 'Gaz değişimi',
+  },
+  {
+    id: 'rs-2',
+    deckId: 'deck-fizyoloji',
+    front: 'Karbonmonoksit zehirlenmesinde neden PaO₂ normal çıkabilir?',
+    back: 'CO hemoglobine yüksek afiniteli bağlanır (HbCO) ve oksijen basıncını düşürmez; paletik basınç ölçümü normal kalır ama gerçek oksijen içeriği çökmüştür.',
+    tag: 'Toksikoloji',
+  },
+  {
+    id: 'rs-3',
+    deckId: 'deck-fizyoloji',
+    front: 'V/Q = 0 (şant) ne demektir, hangi hastalıklarda görülür?',
+    back: 'Alveol ventilasyonsuz ama perfüzyonlu; kan oksijenlenmeden geçer. Pnömoni, ARDS ve atelektazide görülür; yüksek akımlı O₂ ile düzeltilemeyen hipoksemi yapar.',
+    tag: 'V/Q',
+  },
+  {
+    id: 'rs-4',
+    deckId: 'deck-fizyoloji',
+    front: 'Kronik KOAH hastasına neden düşük akımlı oksijen verilir?',
+    back: 'Solunum sürükleyicisi hipoksidir (merkezi reseptörler CO₂\'ye duyarsızlaşmıştır). Yüksek akım hipoksik uyarıyı kaldırır → solunum depresyonu ve CO₂ narkozu.',
+    tag: 'Klinik',
+  },
+  {
+    id: 'rs-5',
+    deckId: 'deck-fizyoloji',
+    front: 'Surfactan eksikliği hangi tabloyu yapar, nerede üretilir?',
+    back: 'Tip II pnömositlerce üretilir; eksikliği yenidoğan solunum distres sendromuna (NRDS) yol açar. Laplace yasasına göre yüzey gerilimi artar, alveoller çöker.',
+    tag: 'Mekanik',
+  },
+  // Anemiler
+  {
+    id: 'an-10',
+    deckId: 'deck-patoloji',
+    front: 'Demir eksikliği ile talasemi minör en hızlı nasıl ayrılır?',
+    back: 'Ferritin (DEA düşük, talasemi normal), RDW (DEA yüksek, talasemi normal) ve HbA2 (talasemi minörde >%3.5).',
+    tag: 'Hematoloji',
+  },
+  {
+    id: 'an-11',
+    deckId: 'deck-patoloji',
+    front: 'Hemolitik aneminin dört laboratuvar imzası?',
+    back: 'LDH artışı, indirekt bilirubin artışı, retikülositoz ve düşük haptoglobin.',
+    tag: 'Hematoloji',
+  },
+  {
+    id: 'an-12',
+    deckId: 'deck-patoloji',
+    front: 'G6PD eksikliğinde hemolizi tetikleyen durumlar?',
+    back: 'Oksidatif stres: fava fasulyesi (favizm), primaquine, kefalosporinler, enfeksiyonlar. Yaymada bite (ısırık) hücreleri ve Heinz cisimcikleri görülür.',
+    tag: 'Enzim defekti',
+  },
+  {
+    id: 'an-13',
+    deckId: 'deck-patoloji',
+    front: 'B12 eksikliğinde folat verilirse ne olur?',
+    back: 'Anemi düzelir ancak nörolojik hasar (subakut kombine dejenerasyon) ilerler. Bu yüzden makrositer anemide önce B12 ölçülür.',
+    tag: 'Tuzak',
+  },
+  {
+    id: 'an-14',
+    deckId: 'deck-patoloji',
+    front: 'Megaloblastik aneminin periferik yayma bulguları?',
+    back: 'Oval makrositler, hipersegmente nötrofil (≥5 lob), anizositoz; kemik iliğinde nükleer-sitoplazmik uyumsuzluk.',
+    tag: 'Morpholoji',
+  },
+  // Karaciğer
+  {
+    id: 'lv-1',
+    deckId: 'deck-histoloji',
+    front: 'Gilbert sendromunun patofizyolojisi ve prognozu?',
+    back: 'UGT enzim aktivitesinde hafif azalma (~%30); açlık/stresle indirekt bilirubin yükselir (%2-5 mg/dL). İyi huyludur, tedavi gerektirmez.',
+    tag: 'Sarılık',
+  },
+  {
+    id: 'lv-2',
+    deckId: 'deck-histoloji',
+    front: 'Obstrüktif sarılıkta idrar ve dışkı rengi nasıldır?',
+    back: 'İdrar koyulaşır (direkt bilirubin böbrekten atılır), dışkı açık/kil rengi olur (akolik) — bağırsaklara bilirubin ulaşamaz.',
+    tag: 'Sarılık',
+  },
+  {
+    id: 'lv-3',
+    deckId: 'deck-histoloji',
+    front: 'AST/ALT oranı >2 hangi durumu düşündürür?',
+    back: 'Alkolik karaciğer hastalığı (mitokondriyal hasar nedeniyle AST baskın). GGT artışıyla birlikte tanı desteklenir.',
+    tag: 'KFT',
+  },
+  {
+    id: 'lv-4',
+    deckId: 'deck-histoloji',
+    front: 'Portal triadın üç bileşeni?',
+    back: 'Portal ven dalı (besin zengini kan, %75), hepatik arter dalı (oksijen, %25) ve safra kanalı.',
+    tag: 'Histoloji',
+  },
+  {
+    id: 'lv-5',
+    deckId: 'deck-histoloji',
+    front: 'Dubin-Johnson ve Rotor sendromlarının ortak ve farklı yönleri?',
+    back: 'Her ikisi de direkt hiperbilirubinemi yapar; Dubin-Johnson\'da MRP2 taşıyıcı defekti ve siyah karaciğer, Rotor\'da hepatik geri alım defekti vardır.',
+    tag: 'Sarılık',
+  },
+  // Kas-İskelet
+  {
+    id: 'ms-1',
+    deckId: 'deck-anatomi',
+    front: 'Rotator manşet kasları ve akronimi?',
+    back: 'Supraspinatus, İnfraspinatus, Teres minor, Subskapularis (SITS). En sık yırtılan supraspinatus; abduksiyonun ilk 15°\'sini başlatır.',
+    tag: 'Omuz',
+  },
+  {
+    id: 'ms-2',
+    deckId: 'deck-anatomi',
+    front: 'ACL yırtığının klasik bulguları?',
+    back: 'Ani "pop" sesi, hızlı hemartroz (4 saat içinde), pozitif Lachman ve anterior drawer testi. Menisküs yırtığıyla birlikteliği sıktır (%75).',
+    tag: 'Diz',
+  },
+  {
+    id: 'ms-3',
+    deckId: 'deck-anatomi',
+    front: 'Omuz çıkıklarının en sık tipi ve riskli yapılar?',
+    back: '%95 anterior çıkık (abduksiyon + dış rotasyon). Aksiller sinir ve sirkumfleks humeral arter hasarı sık eşlik eder; redüksiyon sonrası nörovasküler muayene şarttır.',
+    tag: 'Travma',
+  },
+  {
+    id: 'ms-4',
+    deckId: 'deck-anatomi',
+    front: 'Kas kasılmasında Ca²⁺\'nın rolü?',
+    back: 'Sarkoplazmik retikulumdan salınan Ca²⁺ troponin C\'ye bağlanır; tropomiyozin miyozin bağlanma bölgelerini açar → cross-bridge döngüsü başlar.',
+    tag: 'Fizyoloji',
+  },
+  {
+    id: 'ms-5',
+    deckId: 'deck-anatomi',
+    front: 'Tip I ve Tip II kas liflerinin farkı?',
+    back: 'Tip I: yavaş, oksidatif, yorulmaz (postüral kaslar). Tip II: hızlı, glikolitik, çabuk yorulur (güç hareketleri).',
+    tag: 'Fizyoloji',
+  },
+  // Vitamin/Enzim
+  {
+    id: 've-1',
+    deckId: 'deck-biyokimya',
+    front: 'Tiamin eksikliğinin üç klinik tablosu?',
+    back: 'Islak beriberi (yüksek çıkışlı kalp yetmezliği), kuru beriberi (periferik nöropati), Wernicke-Korsakoff (oftalmopleji + ataksi + konfüzyon / amnezi).',
+    tag: 'Vitaminler',
+  },
+  {
+    id: 've-2',
+    deckId: 'deck-biyokimya',
+    front: 'Pelagranın üç D\'si?',
+    back: 'Dermatit (güneş duyarlılığı), Diyare, Demans — niasin (B3) eksikliği; mısırla beslenen popülasyonlarda klasiktir.',
+    tag: 'Vitaminler',
+  },
+  {
+    id: 've-3',
+    deckId: 'deck-biyokimya',
+    front: 'Kompetitif ve non-kompetitif inhibitörlerin Km/Vmax etkileri?',
+    back: 'Kompetitif: Km artar, Vmax değişmez. Non-kompetitif: Vmax düşer, Km değişmez.',
+    tag: 'Kinetik',
+  },
+  {
+    id: 've-4',
+    deckId: 'deck-biyokimya',
+    front: 'K vitamini hangi faktörler için gerekli, eksiklikte ne olur?',
+    back: 'II, VII, IX, X ve C, S proteinleri. Eksiklikte PT uzar, kanama diatezi gelişir (yenidoğanda hemorajik hastalık).',
+    tag: 'Vitaminler',
+  },
+  {
+    id: 've-5',
+    deckId: 'deck-biyokimya',
+    front: 'Organofosfat zehirlenmesinde antidotlar?',
+    back: 'Pralidoksim (esterazı reaktive eder) + atropin (muskarinik etkileri bloke eder).',
+    tag: 'Toksikoloji',
+  },
+];
+
+/* ---------------------------------------------------------------------------
    Desteler
 --------------------------------------------------------------------------- */
 
@@ -476,7 +700,8 @@ export const FLASHCARD_DECKS: FlashcardDeck[] = [
     course: 'Anatomi',
     committee: 'Tüm Kurullar',
     color: 'azure',
-    cards: [...ANATOMY_CARDS, ...SPOT_CARDS.filter((c) => c.deckId === 'deck-anatomi')],
+    cards: [...ANATOMY_CARDS, ...EXPANSION_CARDS.filter((c) => c.deckId === 'deck-anatomi'),
+      ...SPOT_CARDS.filter((c) => c.deckId === 'deck-anatomi')],
   },
   {
     id: 'deck-fizyoloji',
@@ -485,7 +710,8 @@ export const FLASHCARD_DECKS: FlashcardDeck[] = [
     course: 'Fizyoloji',
     committee: 'Tüm Kurullar',
     color: 'teal',
-    cards: [...PHYSIOLOGY_CARDS, ...SPOT_CARDS.filter((c) => c.deckId === 'deck-fizyoloji')],
+    cards: [...PHYSIOLOGY_CARDS, ...EXPANSION_CARDS.filter((c) => c.deckId === 'deck-fizyoloji'),
+      ...SPOT_CARDS.filter((c) => c.deckId === 'deck-fizyoloji')],
   },
   {
     id: 'deck-biyokimya',
@@ -494,7 +720,8 @@ export const FLASHCARD_DECKS: FlashcardDeck[] = [
     course: 'Biyokimya',
     committee: 'Tüm Kurullar',
     color: 'violet',
-    cards: [...BIOCHEM_CARDS, ...SPOT_CARDS.filter((c) => c.deckId === 'deck-biyokimya')],
+    cards: [...BIOCHEM_CARDS, ...EXPANSION_CARDS.filter((c) => c.deckId === 'deck-biyokimya'),
+      ...SPOT_CARDS.filter((c) => c.deckId === 'deck-biyokimya')],
   },
   {
     id: 'deck-histoloji',
@@ -503,7 +730,8 @@ export const FLASHCARD_DECKS: FlashcardDeck[] = [
     course: 'Histoloji',
     committee: 'Tüm Kurullar',
     color: 'gold',
-    cards: [...HISTOLOGY_CARDS, ...SPOT_CARDS.filter((c) => c.deckId === 'deck-histoloji')],
+    cards: [...HISTOLOGY_CARDS, ...EXPANSION_CARDS.filter((c) => c.deckId === 'deck-histoloji'),
+      ...SPOT_CARDS.filter((c) => c.deckId === 'deck-histoloji')],
   },
   {
     id: 'deck-patoloji',
@@ -512,7 +740,8 @@ export const FLASHCARD_DECKS: FlashcardDeck[] = [
     course: 'Patoloji',
     committee: 'Tüm Kurullar',
     color: 'danger',
-    cards: [...PATHOLOGY_CARDS, ...SPOT_CARDS.filter((c) => c.deckId === 'deck-patoloji')],
+    cards: [...PATHOLOGY_CARDS, ...EXPANSION_CARDS.filter((c) => c.deckId === 'deck-patoloji'),
+      ...SPOT_CARDS.filter((c) => c.deckId === 'deck-patoloji')],
   },
 ];
 

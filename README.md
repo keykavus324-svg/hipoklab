@@ -4,8 +4,15 @@
 
 Tıp ve sağlık bilimleri öğrencileri için komite odaklı, yüksek kontrastlı bir çalışma platformu.
 
-**Faz 1 kapsamı:** Çekirdek mimari, tasarım sistemi (koyu/açık mod), Akademik Kontrol Paneli,
-Komite Odaklı Kütüphane ve Split-View Çalışma Masası (belge + kişisel not defteri).
+**Kapsam:** Kişisel çalışma planı (sınav geri sayımı + günlük görevler + haftalık plan), Akademik
+Kütüphane, Split-View Çalışma Masası, Görsel Atlas, SM-2 flashcard sistemi ve Klinik Vakalar.
+
+## İçerik
+
+- **14 uzun format konu anlatımı** (5 kurul programına göre düzenlenmiş; spot kutuları, karşılaştırma tabloları ve klinik korelasyonlarla)
+- **79 flashcard** (5 ders destesi + notlardaki 35 "Sınav Spotu"ndan otomatik üretilen kartlar; SM-2 aralıklı tekrar)
+- **6 interaktif klinik vaka** (anamnezden tedaviye adım adım karar verme)
+- **56 anatomik/histolojik yapı** (4 SVG diyagram üzerinde incelenebilir)
 
 ## Teknolojiler
 
